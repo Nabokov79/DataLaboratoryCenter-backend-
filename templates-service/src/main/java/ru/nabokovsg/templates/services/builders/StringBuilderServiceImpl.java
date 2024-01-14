@@ -3,6 +3,7 @@ package ru.nabokovsg.templates.services.builders;
 import org.springframework.stereotype.Service;
 import ru.nabokovsg.templates.dto.clientDto.*;
 import ru.nabokovsg.templates.dto.subsectionDada.DivisionDataParam;
+import ru.nabokovsg.templates.exceptions.BadRequestException;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -81,29 +82,36 @@ public class StringBuilderServiceImpl implements StringBuilderService {
 
     @Override
     public String buildFromEmployeeCertificate(EmployeeDto employee) {
-        List<String> documents = employee.getCertificate().stream().map(this::buildFromCertificate).distinct().toList();
         String employeeData = String.join(" - "
                 , employee.getPost()
                 , String.join(". ", String.join(" ", employee.getSurname()
-                                          , String.join(""
-                                          , String.valueOf(employee.getName().charAt(0)),"."
-                                          , String.valueOf(employee.getPatronymic().charAt(0)), ".,").toUpperCase())
+                        , String.join(""
+                                , String.valueOf(employee.getName().charAt(0)),"."
+                                , String.valueOf(employee.getPatronymic().charAt(0)), ".,")
+                                .toUpperCase())
                 )
         );
+        if (employee.getCertificate().isEmpty()) {
+            throw new BadRequestException(String.format("- %s отсутствуют данные аттестации", employeeData));
+        }
+        List<String> documents = employee.getCertificate().stream()
+                                                          .map(this::buildFromCertificate)
+                                                          .distinct()
+                                                          .toList();
         List<String> qualification = new ArrayList<>();
         if (documents.size() == 1) {
             List<String> levels = employee.getCertificate().stream().map(CertificateDto::getLevel).distinct().toList();
             for (String level : levels) {
                 List<CertificateDto> certificates = employee.getCertificate()
-                                                            .stream()
-                                                            .filter(c -> c.getLevel().contains(level))
-                                                            .toList();
+                        .stream()
+                        .filter(c -> c.getLevel().contains(level))
+                        .toList();
                 qualification.add(String.join(", ", buildByQualificationData(certificates, level)));
             }
         }
         return String.join(" ", employeeData, String.join(", "
-                                                        , qualification.stream().sorted().toList())
-                                                        , String.join("", "(",documents.get(0), ")"));
+                        , qualification.stream().sorted().toList())
+                , String.join("", "(",documents.get(0), ")"));
     }
 
     public String buildByQualificationData(List<CertificateDto> certificate, String level) {
