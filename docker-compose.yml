@@ -1,0 +1,49 @@
+version: '3.2'
+services:
+  data-server:
+    build: data-service
+    container_name: data-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - data-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://data-db:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=mywords
+      - SERVER_PORT=8081
+
+  data-db:
+    image: postgres:14-alpine
+    container_name: data-service-dataBase
+    ports:
+      - "6541:5432"
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=mywords
+
+  templates-service:
+    build: templates-service
+    container_name: templates-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - data-server
+      - templates-db
+    environment:
+      - STAT-SERVICE_URL=http://data-server:8081
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://templates-db:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=mywords
+      - SERVER_PORT=8082
+
+  templates-db:
+    image: postgres:14-alpine
+    container_name: templates-dataBase
+    ports:
+      - "6542:5432"
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=mywords
