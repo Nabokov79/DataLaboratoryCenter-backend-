@@ -39,12 +39,13 @@ public class RecommendationTemplateServiceImpl implements RecommendationTemplate
 
     @Override
     public RecommendationTemplateDto update(UpdateRecommendationTemplateDto recommendationDto) {
-        return mapper.mapToRecommendationTemplateDto(
-                repository.save(
-                        mapper.mapToUpdateRecommendationTemplate(get(recommendationDto.getId())
-                                                               , recommendationDto.getRecommendationText())
-                )
-        );
+        if (repository.existsById(recommendationDto.getId())) {
+            return mapper.mapToRecommendationTemplateDto(
+                    repository.save( mapper.mapToUpdateRecommendationTemplate(recommendationDto))
+            );
+        }
+        throw new NotFoundException(
+                String.format("Recommendation template with id=%s not found", recommendationDto.getId()));
     }
 
     @Override
@@ -61,12 +62,5 @@ public class RecommendationTemplateServiceImpl implements RecommendationTemplate
             return;
         }
         throw  new NotFoundException(String.format("Recommendation template with id=%s not found for delete", id));
-    }
-
-    private RecommendationTemplate get(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new NotFoundException(
-                        String.format("Recommendation template with id=%s not found", id))
-                );
     }
 }
