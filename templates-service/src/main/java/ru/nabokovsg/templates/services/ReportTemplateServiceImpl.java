@@ -23,32 +23,29 @@ public class ReportTemplateServiceImpl implements ReportTemplateService {
     private final EntityManager entityManager;
 
     @Override
-    public ReportTemplateDto get(Long id, Long objectTypeId, Long reportingDocumentId) {
+    public ReportTemplateDto get(Long id) {
+        return mapper.mapToReportTemplateDto(repository.findById(id).orElseThrow(() -> new NotFoundException(
+                String.format("Report template by id=%s not found", id))));
+    }
+
+    @Override
+    public List<ShortPageTitleTemplateDto> getAll(Long objectTypeId, Long reportingDocumentId) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
-        if (id != null) {
-            booleanBuilder.and(QReportTemplate.reportTemplate.id.eq(id));
-        }
         if (objectTypeId != null) {
             booleanBuilder.and(QReportTemplate.reportTemplate.pageTitle.objectTypeId.eq(objectTypeId));
         }
         if (reportingDocumentId != null) {
-            booleanBuilder.and(QReportTemplate.reportTemplate.pageTitle.reportingDocumentId.eq(objectTypeId));
+            booleanBuilder.and(QReportTemplate.reportTemplate.pageTitle.reportingDocumentId.eq(reportingDocumentId));
         }
         QReportTemplate report = QReportTemplate.reportTemplate;
-        ReportTemplate reportDb = new JPAQueryFactory(entityManager).from(report)
-                                                                    .select(report)
-                                                                    .where(booleanBuilder)
-                                                                    .fetchOne();
-        if (reportDb == null) {
-            throw new NotFoundException(
-                    String.format("Report template by predicate=%s not found", booleanBuilder.getValue()));
-        }
-        return mapper.mapToReportTemplateDto(reportDb);
-    }
-
-    @Override
-    public List<ShortPageTitleTemplateDto> getAll() {
-        return repository.findAllPageTitle().stream().map(mapper::mapToShortPageTitleTemplateDto).toList();
+        return new JPAQueryFactory(entityManager).from(report)
+                                                 .select(report)
+                                                 .where(booleanBuilder)
+                                                 .fetch()
+                                                 .stream()
+                                                 .map(ReportTemplate::getPageTitle)
+                                                 .map(mapper::mapToShortPageTitleTemplateDto)
+                                                 .toList();
     }
 
     @Override

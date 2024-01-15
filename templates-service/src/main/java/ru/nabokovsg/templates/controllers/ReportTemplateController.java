@@ -31,19 +31,20 @@ public class ReportTemplateController {
     private final ReportTemplateService service;
 
     @Operation(summary = "Получить шаблон отчета")
-    @GetMapping
-    public ResponseEntity<ReportTemplateDto> get(
-            @RequestParam(name = "id", required = false) @Parameter(name = "Индентификатор раздела") Long id,
-            @RequestParam(name = "objectTypeId", required = false) @Parameter(name = "Индентификатор раздела") Long objectTypeId,
-            @RequestParam(name = "reportingDocumentId", required = false) @Parameter(name = "Индентификатор раздела") Long reportingDocumentId
-    ) {
-        return ResponseEntity.ok().body(service.get(id, objectTypeId, reportingDocumentId));
+    @GetMapping("{id}")
+    public ResponseEntity<ReportTemplateDto> get(@PathVariable @NotNull @Positive
+                                                     @Parameter(name = "Индентификатор раздела") Long id) {
+        return ResponseEntity.ok().body(service.get(id));
     }
 
     @Operation(summary = "Получить все отчеты")
     @GetMapping("/all")
-    public ResponseEntity<List<ShortPageTitleTemplateDto>> getAll() {
-        return ResponseEntity.ok().body(service.getAll());
+    public ResponseEntity<List<ShortPageTitleTemplateDto>> getAll(
+            @RequestParam(name = "objectTypeId", required = false)
+            @Parameter(name = "Индентификатор раздела") Long objectTypeId,
+            @RequestParam(name = "reportingDocumentId", required = false)
+            @Parameter(name = "Индентификатор раздела") Long reportingDocumentId) {
+        return ResponseEntity.ok().body(service.getAll(objectTypeId, reportingDocumentId));
     }
 
     @Operation(summary = "Получить разделы по индентификатору отчета")
