@@ -3,8 +3,10 @@ package ru.nabokovsg.templates.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.nabokovsg.templates.dto.recommendation.NewRecommendationTemplateDto;
+import ru.nabokovsg.templates.dto.recommendation.RecommendationDataTemplateDto;
 import ru.nabokovsg.templates.dto.recommendation.RecommendationTemplateDto;
 import ru.nabokovsg.templates.dto.recommendation.UpdateRecommendationTemplateDto;
+import ru.nabokovsg.templates.exceptions.BadRequestException;
 import ru.nabokovsg.templates.exceptions.NotFoundException;
 import ru.nabokovsg.templates.mappers.RecommendationTemplateMapper;
 import ru.nabokovsg.templates.models.RecommendationTemplate;
@@ -23,28 +25,39 @@ public class RecommendationTemplateServiceImpl implements RecommendationTemplate
     private final SectionTemplateService sectionService;
 
     @Override
-    public RecommendationTemplateDto save(DataType type, NewRecommendationTemplateDto recommendationDto) {
+    public RecommendationTemplateDto save(NewRecommendationTemplateDto recommendationDto) {
         RecommendationTemplate recommendation = repository.findByObjectTypeIdAndRecommendationText(
                                                                              recommendationDto.getObjectTypeId()
                                                                            , recommendationDto.getRecommendationText());
         if (recommendation == null) {
             recommendation = repository.save(mapper.mapToNewRecommendationTemplate(recommendationDto));
-            switch (type) {
-                case REPORT -> sectionService.addRecommendation(recommendationDto.getId(), recommendation);
-                case PROTOCOL -> protocolService.addRecommendation(recommendationDto.getId(), recommendation);
-            }
         }
         return mapper.mapToRecommendationTemplateDto(recommendation);
     }
 
     @Override
     public RecommendationTemplateDto update(UpdateRecommendationTemplateDto recommendationDto) {
-        return mapper.mapToRecommendationTemplateDto(
-                repository.save(
-                        mapper.mapToUpdateRecommendationTemplate(get(recommendationDto.getId())
-                                                               , recommendationDto.getRecommendationText())
-                )
-        );
+        if (repository.existsById(recommendationDto.getId())) {
+            return mapper.mapToRecommendationTemplateDto(
+                    repository.save(mapper.mapToUpdateRecommendationTemplate(recommendationDto))
+            );
+        }
+
+        throw new NotFoundException(
+                String.format("Recommendation template with id=%s not found for update", recommendationDto.getId()));
+    }
+
+    @Override
+    public List<RecommendationTemplateDto> addToDocumentTemplate(RecommendationDataTemplateDto recommendationDto) {
+        DataType type = convertToEnum(recommendationDto.getType());
+        List<RecommendationTemplate> recommendations = repository.findAllById(recommendationDto.getIds());
+        if (!recommendations.isEmpty()) {
+            switch (type) {
+                case SECTION -> sectionService.addRecommendation(recommendationDto.getId(), recommendations);
+                case PROTOCOL -> protocolService.addRecommendation(recommendationDto.getId(), recommendations);
+            }
+        }
+        return recommendations.stream().map(mapper::mapToRecommendationTemplateDto).toList();
     }
 
     @Override
@@ -60,13 +73,11 @@ public class RecommendationTemplateServiceImpl implements RecommendationTemplate
             repository.deleteById(id);
             return;
         }
-        throw  new NotFoundException(String.format("Recommendation template with id=%s not found for delete", id));
+        throw new NotFoundException(String.format("Recommendation template with id=%s not found for delete", id));
     }
 
-    private RecommendationTemplate get(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new NotFoundException(
-                        String.format("Recommendation template with id=%s not found", id))
-                );
+    private DataType convertToEnum(String type) {
+        return DataType.from(type)
+                       .orElseThrow(() -> new BadRequestException(String.format("Unknown DataType =%s", type)));
     }
 }

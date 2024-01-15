@@ -12,9 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.nabokovsg.templates.dto.recommendation.NewRecommendationTemplateDto;
+import ru.nabokovsg.templates.dto.recommendation.RecommendationDataTemplateDto;
 import ru.nabokovsg.templates.dto.recommendation.RecommendationTemplateDto;
 import ru.nabokovsg.templates.dto.recommendation.UpdateRecommendationTemplateDto;
-import ru.nabokovsg.templates.models.enums.DataType;
 import ru.nabokovsg.templates.services.RecommendationTemplateService;
 
 import java.util.List;
@@ -33,19 +33,10 @@ public class RecommendationTemplateController {
     private final RecommendationTemplateService service;
 
     @Operation(summary = "Новая рекомендация для раздела отчета")
-    @PostMapping("/section")
-    public ResponseEntity<RecommendationTemplateDto> saveFromSection(
-                                     @RequestBody @Valid
-                                     @Parameter(name = "Рекомендация") NewRecommendationTemplateDto recommendationDto) {
-        return ResponseEntity.ok().body(service.save(DataType.SECTION, recommendationDto));
-    }
-
-    @Operation(summary = "Новая рекомендация протокола")
-    @PostMapping("/protocol")
-    public ResponseEntity<RecommendationTemplateDto> saveFromProtocol(
-            @RequestBody @Valid
-            @Parameter(name = "Рекомендация") NewRecommendationTemplateDto recommendationDto) {
-        return ResponseEntity.ok().body(service.save(DataType.PROTOCOL, recommendationDto));
+    @PostMapping
+    public ResponseEntity<RecommendationTemplateDto> save(
+            @RequestBody @Valid @Parameter(name = "Рекомендация") NewRecommendationTemplateDto recommendationDto) {
+        return ResponseEntity.ok().body(service.save(recommendationDto));
     }
 
     @Operation(summary = "Изменение рекомендации")
@@ -54,6 +45,14 @@ public class RecommendationTemplateController {
                                   @RequestBody @Valid
                                   @Parameter(name = "Рекомендация") UpdateRecommendationTemplateDto recommendationDto) {
         return ResponseEntity.ok().body(service.update(recommendationDto));
+    }
+
+    @Operation(summary = "Новая рекомендация для раздела отчета")
+    @PostMapping("/add")
+    public ResponseEntity<List<RecommendationTemplateDto>> addToDocumentTemplate(
+            @RequestBody @Valid
+            @Parameter(name = "Рекомендация") RecommendationDataTemplateDto recommendationDto) {
+        return ResponseEntity.ok().body(service.addToDocumentTemplate(recommendationDto));
     }
 
     @Operation(summary = "Получить рекомендации по типу объекта")

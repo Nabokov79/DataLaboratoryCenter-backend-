@@ -16,10 +16,6 @@ import lombok.Setter;
 @Schema(description = "Данные новой рекомендации")
 public class NewRecommendationTemplateDto {
 
-    @Schema(description = "Индентификатор отчета иои протокола")
-    @NotNull(message = "id(section/protocol) should not be null")
-    @Positive(message = "id(section/protocol) can only be positive")
-    private Long id;
     @Schema(description = "Индентификатор типа объекта")
     @NotNull(message = "object type id should not be null")
     @Positive(message = "object type id can only be positive")
