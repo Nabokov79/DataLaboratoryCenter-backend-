@@ -11,9 +11,9 @@ import java.util.List;
 
 public interface ReportTemplateService {
 
-    ReportTemplateDto get(Long id, Long objectTypeId, Long reportingDocumentId);
+    ReportTemplateDto get(Long id);
 
-    List<ShortPageTitleTemplateDto> getAll();
+    List<ShortPageTitleTemplateDto> getAll(Long objectTypeId, Long reportingDocumentId);
 
     List<ShortSectionTemplateDto> getAllSections(Long id);
 

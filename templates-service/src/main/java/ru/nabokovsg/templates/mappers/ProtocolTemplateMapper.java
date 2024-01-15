@@ -2,6 +2,7 @@ package ru.nabokovsg.templates.mappers;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 import ru.nabokovsg.templates.dto.clientDto.ReportingDocumentDto;
 import ru.nabokovsg.templates.dto.protocol.NewProtocolTemplateDto;
 import ru.nabokovsg.templates.dto.protocol.ProtocolTemplateDto;
@@ -10,7 +11,7 @@ import ru.nabokovsg.templates.dto.protocol.UpdateProtocolTemplateDto;
 import ru.nabokovsg.templates.models.HeaderTemplate;
 import ru.nabokovsg.templates.models.ProtocolTemplate;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ProtocolTemplateMapper {
 
     @Mapping(source = "header", target = "header")

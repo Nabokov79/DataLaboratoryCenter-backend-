@@ -11,6 +11,7 @@ import ru.nabokovsg.templates.models.ConclusionTemplate;
 @Mapper(componentModel = "spring")
 public interface ConclusionTemplateMapper {
 
+    @Mapping(target = "id", ignore = true)
     ConclusionTemplate mapToNewConclusionTemplate(NewConclusionTemplateDto conclusionDto);
 
     @Mapping(source = "conclusionDto.ifThanNorm", target = "ifThanNorm")

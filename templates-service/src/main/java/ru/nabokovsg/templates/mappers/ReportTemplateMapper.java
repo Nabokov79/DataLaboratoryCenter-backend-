@@ -13,6 +13,8 @@ import ru.nabokovsg.templates.models.SectionTemplate;
 public interface ReportTemplateMapper {
 
     @Mapping(source = "pageTitle", target = "pageTitle")
+    @Mapping(target = "sections", ignore = true)
+    @Mapping(target = "appendices", ignore = true)
     @Mapping(target = "id", ignore = true)
     ReportTemplate mapToNewReportTemplate(PageTitleTemplate pageTitle);
 
