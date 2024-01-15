@@ -21,7 +21,7 @@ public class UpdateColumnHeaderTemplateDto {
     @Schema(description = "Порядковый номер колонки")
     @NotNull(message = "sequential cell number should not be null")
     @Positive(message = "sequential cell number must be positive")
-    private Integer sequentialCellNumber;
+    private Integer sequentialNumber;
     @Schema(description = "Заголовок колонки")
     @NotBlank(message = "heading should not be blank")
     private String heading;
