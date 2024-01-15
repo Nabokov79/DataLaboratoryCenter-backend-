@@ -15,6 +15,8 @@ public class RecommendationTemplateDto {
 
     @Schema(description = "Индентификатор")
     Long id;
+    @Schema(description = "Индентификатор типа объекта")
+    Long objectTypeId;
     @Schema(description = "Текст рекомендации")
     String recommendationText;
 }

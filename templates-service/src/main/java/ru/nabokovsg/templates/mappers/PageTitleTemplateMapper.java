@@ -2,6 +2,7 @@ package ru.nabokovsg.templates.mappers;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 import ru.nabokovsg.templates.dto.clientDto.ReportingDocumentDto;
 import ru.nabokovsg.templates.dto.pageTitle.NewPageTitleTemplateDto;
 import ru.nabokovsg.templates.dto.pageTitle.PageTitleTemplateDto;
@@ -9,7 +10,7 @@ import ru.nabokovsg.templates.dto.pageTitle.UpdatePageTitleTemplateDto;
 import ru.nabokovsg.templates.models.HeaderTemplate;
 import ru.nabokovsg.templates.models.PageTitleTemplate;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface PageTitleTemplateMapper {
 
     @Mapping(source = "header", target = "header")

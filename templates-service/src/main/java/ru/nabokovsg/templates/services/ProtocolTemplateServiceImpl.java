@@ -3,6 +3,7 @@ package ru.nabokovsg.templates.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.nabokovsg.templates.client.TemplateClient;
+import ru.nabokovsg.templates.dto.clientDto.ReportingDocumentDto;
 import ru.nabokovsg.templates.dto.protocol.NewProtocolTemplateDto;
 import ru.nabokovsg.templates.dto.protocol.ProtocolTemplateDto;
 import ru.nabokovsg.templates.dto.protocol.ShortProtocolTemplateDto;
@@ -35,7 +36,7 @@ public class ProtocolTemplateServiceImpl implements ProtocolTemplateService {
                     , headerService.save(protocolDto.getHeader()));
             template = mapper.mapToProtocolTemplate(template
                              , builderService.buildFromObjectsType(client.getObjectsType(protocolDto.getObjectTypeId()))
-                             , client.getReportingDocument(protocolDto.getReportingDocumentId()));
+                             , getReportingDocument(protocolDto.getReportingDocumentId()));
         }
         return mapper.mapToShortProtocolTemplateDto(repository.save(template));
     }
@@ -47,7 +48,7 @@ public class ProtocolTemplateServiceImpl implements ProtocolTemplateService {
                                                                 , headerService.save(protocolDto.getHeader()));
             template = mapper.mapToProtocolTemplate(template
                     , builderService.buildFromObjectsType(client.getObjectsType(protocolDto.getObjectTypeId()))
-                    , client.getReportingDocument(protocolDto.getReportingDocumentId()));
+                    , getReportingDocument(protocolDto.getReportingDocumentId()));
             return mapper.mapToShortProtocolTemplateDto(repository.save(template));
         }
         throw new NotFoundException(
@@ -111,8 +112,12 @@ public class ProtocolTemplateServiceImpl implements ProtocolTemplateService {
         repository.save(protocol);
     }
 
-    public ProtocolTemplate getById(Long id) {
+    private ProtocolTemplate getById(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format("Protocol template with id=%s not found", id)));
+    }
+
+    private ReportingDocumentDto getReportingDocument(Long id) {
+        return client.getReportingDocument(id);
     }
 }
