@@ -20,6 +20,10 @@ public class UpdateRecommendationTemplateDto {
     @NotNull(message = "id should not be null")
     @Positive(message = "id can only be positive")
     Long id;
+    @Schema(description = "Индентификатор типа объекта")
+    @NotNull(message = "object type id should not be null")
+    @Positive(message = "object type id can only be positive")
+    Long objectTypeId;
     @Schema(description = "Текст рекомендации")
     @NotBlank(message = "recommendation text should not be blank")
     String recommendationText;
