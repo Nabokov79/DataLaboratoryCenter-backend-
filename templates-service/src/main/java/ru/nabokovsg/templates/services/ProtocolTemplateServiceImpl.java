@@ -106,9 +106,9 @@ public class ProtocolTemplateServiceImpl implements ProtocolTemplateService {
     }
 
     @Override
-    public void addRecommendation(Long id, RecommendationTemplate recommendation) {
+    public void addRecommendation(Long id,  List<RecommendationTemplate> recommendations) {
         ProtocolTemplate protocol = getById(id);
-        protocol.getRecommendations().add(recommendation);
+        protocol.getRecommendations().addAll(recommendations);
         repository.save(protocol);
     }
 

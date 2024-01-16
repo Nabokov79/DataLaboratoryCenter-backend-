@@ -27,5 +27,5 @@ public interface SectionTemplateService {
 
     void addCharacteristicsSurveyObject(Long id, List<CharacteristicsSurveyObject> characteristics);
 
-    void addRecommendation(Long id, RecommendationTemplate recommendation);
+    void addRecommendation(Long id, List<RecommendationTemplate> recommendations);
 }

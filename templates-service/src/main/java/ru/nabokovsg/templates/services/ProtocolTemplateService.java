@@ -28,5 +28,5 @@ public interface ProtocolTemplateService {
 
     void addAppendices(Long id, AppendicesTemplate appendices);
 
-    void addRecommendation(Long id, RecommendationTemplate recommendation);
+    void addRecommendation(Long id, List<RecommendationTemplate> recommendations);
 }

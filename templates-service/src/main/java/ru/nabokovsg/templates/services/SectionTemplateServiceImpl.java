@@ -99,9 +99,9 @@ public class SectionTemplateServiceImpl implements SectionTemplateService {
     }
 
     @Override
-    public void addRecommendation(Long id, RecommendationTemplate recommendation) {
+    public void addRecommendation(Long id, List<RecommendationTemplate> recommendations) {
         SectionTemplate section = getById(id);
-        section.getRecommendations().add(recommendation);
+        section.getRecommendations().addAll(recommendations);
         repository.save(section);
     }
 
