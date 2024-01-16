@@ -18,7 +18,7 @@ import java.util.List;
 @Schema(description = "Данные рекомендации для добавления к отчету или протоколу")
 public class RecommendationDataTemplateDto {
 
-    @Schema(description = "Индентификатор отчета иои протокола")
+    @Schema(description = "Индентификатор отчета или протокола")
     @NotNull(message = "id(section/protocol) should not be null")
     @Positive(message = "id(section/protocol) can only be positive")
     private Long id;

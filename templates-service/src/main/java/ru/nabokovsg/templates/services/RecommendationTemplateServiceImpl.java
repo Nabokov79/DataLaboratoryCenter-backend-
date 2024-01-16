@@ -27,8 +27,8 @@ public class RecommendationTemplateServiceImpl implements RecommendationTemplate
     @Override
     public RecommendationTemplateDto save(NewRecommendationTemplateDto recommendationDto) {
         RecommendationTemplate recommendation = repository.findByObjectTypeIdAndRecommendationText(
-                                                                             recommendationDto.getObjectTypeId()
-                                                                           , recommendationDto.getRecommendationText());
+                recommendationDto.getObjectTypeId()
+                , recommendationDto.getRecommendationText());
         if (recommendation == null) {
             recommendation = repository.save(mapper.mapToNewRecommendationTemplate(recommendationDto));
         }
@@ -63,8 +63,8 @@ public class RecommendationTemplateServiceImpl implements RecommendationTemplate
     @Override
     public List<RecommendationTemplateDto> getAll(Long objectTypeId) {
         return repository.findAllByObjectTypeId(objectTypeId).stream()
-                                                             .map(mapper::mapToRecommendationTemplateDto)
-                                                             .toList();
+                .map(mapper::mapToRecommendationTemplateDto)
+                .toList();
     }
 
     @Override
@@ -78,6 +78,6 @@ public class RecommendationTemplateServiceImpl implements RecommendationTemplate
 
     private DataType convertToEnum(String type) {
         return DataType.from(type)
-                       .orElseThrow(() -> new BadRequestException(String.format("Unknown DataType =%s", type)));
+                .orElseThrow(() -> new BadRequestException(String.format("Unknown DataType =%s", type)));
     }
 }

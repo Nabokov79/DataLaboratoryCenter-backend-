@@ -59,22 +59,22 @@ public class ApplicationController {
     public ResponseEntity<List<ApplicationDto>> getAll(
                @RequestParam(value = "addressId", required = false)
                @Parameter(description = "Индентификатор адреса") Long addressId,
-               @RequestParam(value = "startDate", required = false)
+               @RequestParam(value = "startDatePeriod", required = false)
                @Parameter(description = "Дата начала периода, за который требуется выдать заявки") LocalDate startDatePeriod,
-               @RequestParam(value = "endDate", required = false)
+               @RequestParam(value = "endDatePeriod", required = false)
                @Parameter(description = "Дата окончания периода, за который требуется выдать заявки") LocalDate endDatePeriod,
                @RequestParam(value = "surveyObject", required = false)
                @Parameter(description = "Индентификатор объекта оследования") Long surveyObject,
                @RequestParam(value = "objectTypeId", required = false)
                @Parameter(description = "Индентификатор объекта оследования") Long objectTypeId,
                @RequestParam(value = "employeeId", required = false)
-               @NotNull @Positive @Parameter(description = "Индентификатор сотрудника") Long employeeId,
+               @Parameter(description = "Индентификатор сотрудника") Long employeeId,
                @RequestParam(value = "documentNumber", required = false)
-               @NotNull @Positive @Parameter(description = "Номер документа") Integer documentNumber,
+               @Parameter(description = "Номер документа") Integer documentNumber,
                @RequestParam(value = "status", required = false)
-               @NotNull @Parameter(description = "Статус документа") String documentStatus,
+               @Parameter(description = "Статус документа") String documentStatus,
                @RequestParam(value = "status", required = false)
-               @NotNull @Parameter(description = "Статус заявки") String applicationStatus) {
+               @Parameter(description = "Статус заявки") String applicationStatus) {
               ApplicationSearchParametersDto parameters = new ApplicationSearchParametersDto(addressId, startDatePeriod
                                                                                      , endDatePeriod, surveyObject
                                                                                      , objectTypeId, employeeId

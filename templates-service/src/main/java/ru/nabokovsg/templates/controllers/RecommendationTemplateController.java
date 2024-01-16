@@ -32,7 +32,8 @@ public class RecommendationTemplateController {
 
     private final RecommendationTemplateService service;
 
-    @Operation(summary = "Новая рекомендация для раздела отчета")
+
+    @Operation(summary = "Сохранение новой рекомендации")
     @PostMapping
     public ResponseEntity<RecommendationTemplateDto> save(
             @RequestBody @Valid @Parameter(name = "Рекомендация") NewRecommendationTemplateDto recommendationDto) {
@@ -42,12 +43,12 @@ public class RecommendationTemplateController {
     @Operation(summary = "Изменение рекомендации")
     @PatchMapping
     public ResponseEntity<RecommendationTemplateDto> update(
-                                  @RequestBody @Valid
-                                  @Parameter(name = "Рекомендация") UpdateRecommendationTemplateDto recommendationDto) {
+            @RequestBody @Valid
+            @Parameter(name = "Рекомендация") UpdateRecommendationTemplateDto recommendationDto) {
         return ResponseEntity.ok().body(service.update(recommendationDto));
     }
 
-    @Operation(summary = "Новая рекомендация для раздела отчета")
+    @Operation(summary = "Добавление рекомендации к отчету или протоколу")
     @PostMapping("/add")
     public ResponseEntity<List<RecommendationTemplateDto>> addToDocumentTemplate(
             @RequestBody @Valid
