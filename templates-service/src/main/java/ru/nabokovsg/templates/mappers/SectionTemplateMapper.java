@@ -1,6 +1,7 @@
 package ru.nabokovsg.templates.mappers;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 import ru.nabokovsg.templates.dto.section.NewSectionTemplateDto;
 import ru.nabokovsg.templates.dto.section.SectionTemplateDto;
@@ -14,7 +15,8 @@ public interface SectionTemplateMapper {
 
     SectionTemplate mapToNewSectionTemplate(NewSectionTemplateDto sectionDto);
 
-    SectionTemplate mapToUpdateSectionTemplate(UpdateSectionTemplateDto sectionDto);
+    SectionTemplate mapToUpdateSectionTemplate(@MappingTarget SectionTemplate sectionTemplate
+                                                            , UpdateSectionTemplateDto sectionDto);
 
     SectionTemplateDto mapToSectionTemplateDto(SectionTemplate section);
 
