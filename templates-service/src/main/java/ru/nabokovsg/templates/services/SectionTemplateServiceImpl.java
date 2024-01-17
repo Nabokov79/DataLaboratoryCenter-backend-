@@ -51,13 +51,18 @@ public class SectionTemplateServiceImpl implements SectionTemplateService {
 
     @Override
     public List<SectionTemplateDto> update(List<UpdateSectionTemplateDto> sectionsDto) {
-        validateIds(sectionsDto.stream().map(UpdateSectionTemplateDto::getId).toList());
-        return repository.saveAll(sectionsDto.stream()
-                        .map(mapper::mapToUpdateSectionTemplate)
-                        .toList())
-                .stream()
-                .map(mapper::mapToSectionTemplateDto)
-                .toList();
+        List<Long> ids = sectionsDto.stream().map(UpdateSectionTemplateDto::getId).toList();
+        validateIds(ids);
+        Map<Long, SectionTemplate> sectionsDb = repository.findAllById(ids)
+                                                          .stream()
+                                                          .collect(Collectors.toMap(SectionTemplate::getId, s -> s));
+        List<SectionTemplate> sections = repository.saveAll(
+                sectionsDto.stream()
+                           .map(s -> mapper.mapToUpdateSectionTemplate(sectionsDb.get(s.getId()), s))
+                           .toList());
+        return sections.stream()
+                        .map(mapper::mapToSectionTemplateDto)
+                        .toList();
     }
 
     @Override
