@@ -21,4 +21,6 @@ public interface CharacteristicsSurveyObjectService {
    void delete(Long id);
 
     List<CharacteristicsSurveyObject> getAllByPredicate(Long objectTypeId, DataType type);
+
+    List<CharacteristicsSurveyObject> getAllById(List<Long> ids);
 }

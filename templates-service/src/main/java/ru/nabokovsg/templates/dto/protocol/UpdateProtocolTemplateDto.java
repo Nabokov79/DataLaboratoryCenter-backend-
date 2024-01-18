@@ -31,4 +31,7 @@ public class UpdateProtocolTemplateDto {
     @Schema(description = "Данные заголовка")
     @NotNull(message = "header not be null")
     private NewHeaderTemplateDto header;
+    @Schema(description = "Указать характеристи объекта обследования")
+    @NotNull(message = "characteristics should not be null")
+    private boolean characteristics;
 }

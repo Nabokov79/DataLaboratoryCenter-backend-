@@ -11,6 +11,7 @@ import ru.nabokovsg.templates.dto.protocol.UpdateProtocolTemplateDto;
 import ru.nabokovsg.templates.exceptions.NotFoundException;
 import ru.nabokovsg.templates.mappers.ProtocolTemplateMapper;
 import ru.nabokovsg.templates.models.*;
+import ru.nabokovsg.templates.models.enums.DataType;
 import ru.nabokovsg.templates.repository.ProtocolTemplateRepository;
 import ru.nabokovsg.templates.services.builders.StringBuilderService;
 
@@ -25,6 +26,7 @@ public class ProtocolTemplateServiceImpl implements ProtocolTemplateService {
     private final TemplateClient client;
     private final HeaderTemplateService headerService;
     private final StringBuilderService builderService;
+    private final CharacteristicsSurveyObjectService characteristicsService;
 
     @Override
     public ShortProtocolTemplateDto save(NewProtocolTemplateDto protocolDto) {
@@ -36,7 +38,8 @@ public class ProtocolTemplateServiceImpl implements ProtocolTemplateService {
                     , headerService.save(protocolDto.getHeader()));
             template = mapper.mapToProtocolTemplate(template
                              , builderService.buildFromObjectsType(client.getObjectsType(protocolDto.getObjectTypeId()))
-                             , getReportingDocument(protocolDto.getReportingDocumentId()));
+                             , getReportingDocument(protocolDto.getReportingDocumentId())
+                             , getCharacteristicsSurveyObject(protocolDto.getObjectTypeId()));
         }
         return mapper.mapToShortProtocolTemplateDto(repository.save(template));
     }
@@ -48,7 +51,8 @@ public class ProtocolTemplateServiceImpl implements ProtocolTemplateService {
                                                                 , headerService.save(protocolDto.getHeader()));
             template = mapper.mapToProtocolTemplate(template
                     , builderService.buildFromObjectsType(client.getObjectsType(protocolDto.getObjectTypeId()))
-                    , getReportingDocument(protocolDto.getReportingDocumentId()));
+                    , getReportingDocument(protocolDto.getReportingDocumentId())
+                    , template.getCharacteristics());
             return mapper.mapToShortProtocolTemplateDto(repository.save(template));
         }
         throw new NotFoundException(
@@ -119,5 +123,9 @@ public class ProtocolTemplateServiceImpl implements ProtocolTemplateService {
 
     private ReportingDocumentDto getReportingDocument(Long id) {
         return client.getReportingDocument(id);
+    }
+
+    private List<CharacteristicsSurveyObject> getCharacteristicsSurveyObject(Long objectTypeId) {
+        return characteristicsService.getAllByPredicate(objectTypeId, DataType.PROTOCOL);
     }
 }

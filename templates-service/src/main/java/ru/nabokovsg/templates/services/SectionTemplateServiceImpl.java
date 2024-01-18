@@ -1,10 +1,6 @@
 package ru.nabokovsg.templates.services;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.nabokovsg.templates.dto.characteristics.CharacteristicsSurveyObjectDto;
 import ru.nabokovsg.templates.dto.section.NewSectionTemplateDto;
@@ -17,16 +13,11 @@ import ru.nabokovsg.templates.models.*;
 import ru.nabokovsg.templates.models.enums.DataType;
 import ru.nabokovsg.templates.repository.SectionTemplateRepository;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class SectionTemplateServiceImpl implements SectionTemplateService {
 
     private final SectionTemplateRepository repository;
@@ -34,7 +25,6 @@ public class SectionTemplateServiceImpl implements SectionTemplateService {
     private final ReportTemplateService reportService;
     private final CharacteristicsSurveyObjectService characteristicsService;
     private final PageTitleTemplateService pageTitleService;
-    private final EntityManager entityManager;
 
     @Override
     public List<SectionTemplateDto> save(Long reportId, List<NewSectionTemplateDto> sectionsDto) {
@@ -69,20 +59,24 @@ public class SectionTemplateServiceImpl implements SectionTemplateService {
     public List<SectionTemplateDto> update(List<UpdateSectionTemplateDto> sectionsDto) {
         List<Long> ids = sectionsDto.stream().map(UpdateSectionTemplateDto::getId).toList();
         validateIds(ids);
-        Map<Long, SectionTemplate> sectionsDb = repository.findAllById(ids)
-                                                          .stream()
-                                                          .collect(Collectors.toMap(SectionTemplate::getId, s -> s));
-        List<SectionTemplate> sections =
-                sectionsDto.stream()
-                           .map(s -> {
-                              SectionTemplate section = mapper.mapToUpdateSectionTemplate(sectionsDb.get(s.getId()), s);
-                               if (s.isCharacteristics()) {
-                                   section.setCharacteristics(getCharacteristicsSurveyObject(reportId));
-                               }
-                               return section;
-                           })
-                           .toList();
-        return repository.saveAll(sections).stream()
+        List<SectionTemplate> sections =  repository.findAllById(ids);
+        Map<Long, SectionTemplate> sectionsDb = sections.stream()
+                                                        .collect(Collectors.toMap(SectionTemplate::getId, s -> s));
+        List<CharacteristicsSurveyObject> characteristics = sections.stream()
+                                                                    .map(SectionTemplate::getCharacteristics)
+                                                                    .filter(Objects::nonNull)
+                                                                    .flatMap(Collection::stream)
+                                                                    .toList();
+        return repository.saveAll(sectionsDto.stream()
+                        .map(s ->  {
+                            SectionTemplate section = mapper.mapToUpdateSectionTemplate(sectionsDb.get(s.getId()), s);
+                            if (s.isCharacteristics()) {
+                                section.setCharacteristics(characteristics);
+                            }
+                            return section;
+                        })
+                        .toList())
+                        .stream()
                         .map(mapper::mapToSectionTemplateDto)
                         .toList();
     }
@@ -101,7 +95,9 @@ public class SectionTemplateServiceImpl implements SectionTemplateService {
 
     @Override
     public List<ShortSubsectionTemplateDto> getAllSubsections(Long id) {
-        return repository.findAllSubsection(id).stream().map(mapper::mapToShortSubsectionTemplateDto).toList();
+        return repository.findAllSubsection(id).stream()
+                                               .map(mapper::mapToShortSubsectionTemplateDto)
+                                               .toList();
     }
 
     @Override
@@ -152,10 +148,5 @@ public class SectionTemplateServiceImpl implements SectionTemplateService {
 
     private List<CharacteristicsSurveyObject> getCharacteristicsSurveyObject(Long objectTypeId) {
         return characteristicsService.getAllByPredicate(objectTypeId, DataType.SECTION);
-    }
-    private Long getObjectTypeId(List<Long> ids) {
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<PageTitleTemplate> query = criteriaBuilder.createQuery(PageTitleTemplate.class);
-        return null;
     }
 }

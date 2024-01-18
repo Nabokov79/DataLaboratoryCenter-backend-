@@ -108,9 +108,14 @@ public class CharacteristicsSurveyObjectServiceImpl implements CharacteristicsSu
         if (characteristics.isEmpty()) {
             throw new NotFoundException(
                     String.format("Characteristics survey object for " +
-                                   "objectType with id=%s and document type=%s not found", id, type));
+                                   "objectT tpe with id=%s and document type=%s not found", objectTypeId, type));
         }
         return characteristics;
+    }
+
+    @Override
+    public List<CharacteristicsSurveyObject> getAllById(List<Long> ids) {
+        return repository.findAllById(ids);
     }
 
     private void validateIds(List<Long> ids) {

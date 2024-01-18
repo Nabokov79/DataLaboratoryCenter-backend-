@@ -23,4 +23,10 @@ public class CharacteristicsSurveyObject {
     private String characteristicName;
     @Column(name = "sequential_number_visible")
     private boolean sequentialNumberVisible;
+    @Column(name = "object_type_id")
+    private Long objectTypeId;
+    @Column(name = "use_in_report")
+    private boolean useInReport;
+    @Column(name = "use_in_protocol")
+    private boolean useInProtocol;
 }
