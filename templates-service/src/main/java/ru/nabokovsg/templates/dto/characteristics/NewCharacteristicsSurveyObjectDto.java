@@ -26,4 +26,8 @@ public class NewCharacteristicsSurveyObjectDto {
     @Schema(description = "Указать порядковый номер в документе")
     @NotNull(message = "sequential number visible should not be null")
     private boolean sequentialNumberVisible;
+    @NotNull(message = "useInReport should not be null")
+    private boolean useInReport;
+    @NotNull(message = "useInProtocol should not be null")
+    private boolean useInProtocol;
 }
