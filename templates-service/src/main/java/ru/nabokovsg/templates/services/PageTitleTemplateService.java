@@ -9,4 +9,6 @@ public interface PageTitleTemplateService {
     PageTitleTemplateDto save(NewPageTitleTemplateDto pageTitleDto);
 
     PageTitleTemplateDto update(UpdatePageTitleTemplateDto pageTitleDto);
+
+    Long getObjectTypeIdByReportId(Long reportId);
 }

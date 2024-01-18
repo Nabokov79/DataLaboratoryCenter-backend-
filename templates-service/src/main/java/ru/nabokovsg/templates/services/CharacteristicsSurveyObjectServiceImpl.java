@@ -1,5 +1,8 @@
 package ru.nabokovsg.templates.services;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.nabokovsg.templates.dto.characteristics.CharacteristicsSurveyObjectDto;
@@ -8,6 +11,8 @@ import ru.nabokovsg.templates.dto.characteristics.UpdateCharacteristicsSurveyObj
 import ru.nabokovsg.templates.exceptions.NotFoundException;
 import ru.nabokovsg.templates.mappers.CharacteristicsSurveyObjectMapper;
 import ru.nabokovsg.templates.models.CharacteristicsSurveyObject;
+import ru.nabokovsg.templates.models.QCharacteristicsSurveyObject;
+import ru.nabokovsg.templates.models.enums.DataType;
 import ru.nabokovsg.templates.repository.CharacteristicsSurveyObjectRepository;
 
 import java.util.ArrayList;
@@ -23,12 +28,10 @@ public class CharacteristicsSurveyObjectServiceImpl implements CharacteristicsSu
 
     private final CharacteristicsSurveyObjectRepository repository;
     private final CharacteristicsSurveyObjectMapper mapper;
-    private final SectionTemplateService sectionService;
-    private final ProtocolTemplateService protocolService;
+    private final EntityManager entityManager;
 
     @Override
-    public List<CharacteristicsSurveyObjectDto> save(String string
-                                                   , Long id
+    public List<CharacteristicsSurveyObjectDto> save(Long objectTypeId
                                                    , List<NewCharacteristicsSurveyObjectDto> characteristicsDto) {
         Map<String, CharacteristicsSurveyObject> characteristicsDb = repository.findAll(
                 characteristicsDto.stream()
@@ -46,18 +49,11 @@ public class CharacteristicsSurveyObjectServiceImpl implements CharacteristicsSu
             List<CharacteristicsSurveyObject> characteristics= repository.saveAll(
                                                     characteristicsDto.stream()
                                                                       .map(mapper::mapToNewCharacteristicsSurveyObject)
+                                                                      .peek(c -> c.setObjectTypeId(objectTypeId))
                                                                       .toList());
             for (CharacteristicsSurveyObject characteristic : characteristics) {
                 characteristicsDb.put(characteristic.getCharacteristicName(), characteristic);
             }
-        }
-        switch (string) {
-            case "section" -> sectionService.addCharacteristicsSurveyObject(
-                    id, new ArrayList<>(characteristicsDb.values())
-            );
-            case "protocol" -> protocolService.addCharacteristicsSurveyObject(
-                    id, new ArrayList<>(characteristicsDb.values())
-            );
         }
         return characteristicsDb.values().stream()
                                          .map(mapper::mapToCharacteristicsSurveyObjectDto)
@@ -65,10 +61,12 @@ public class CharacteristicsSurveyObjectServiceImpl implements CharacteristicsSu
     }
 
     @Override
-    public List<CharacteristicsSurveyObjectDto> update(List<UpdateCharacteristicsSurveyObjectDto> characteristicsDto) {
+    public List<CharacteristicsSurveyObjectDto> update(Long objectTypeId
+                                                     , List<UpdateCharacteristicsSurveyObjectDto> characteristicsDto) {
         validateIds(characteristicsDto.stream().map(UpdateCharacteristicsSurveyObjectDto::getId).toList());
         return repository.saveAll(characteristicsDto.stream()
                                                     .map(mapper::mapToUpdateCharacteristicsSurveyObject)
+                                                    .peek(c -> c.setObjectTypeId(objectTypeId))
                                                     .toList()
                                     )
                                     .stream()
@@ -92,6 +90,27 @@ public class CharacteristicsSurveyObjectServiceImpl implements CharacteristicsSu
         throw new NotFoundException(
                 String.format("CharacteristicsSurveyObject template with id=%s not found for delete", id)
         );
+    }
+
+    @Override
+    public List<CharacteristicsSurveyObject> getAllByPredicate(Long objectTypeId, DataType type) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        booleanBuilder.and(QCharacteristicsSurveyObject.characteristicsSurveyObject.objectTypeId.eq(objectTypeId));
+        switch (type) {
+            case SECTION -> booleanBuilder.and(QCharacteristicsSurveyObject.characteristicsSurveyObject.useInReport.eq(true));
+            case REPORT ->  booleanBuilder.and(QCharacteristicsSurveyObject.characteristicsSurveyObject.useInProtocol.eq(true));
+        }
+        QCharacteristicsSurveyObject characteristic = QCharacteristicsSurveyObject.characteristicsSurveyObject;
+        List<CharacteristicsSurveyObject> characteristics = new JPAQueryFactory(entityManager).from(characteristic)
+                .select(characteristic)
+                .where(booleanBuilder)
+                .fetch();
+        if (characteristics.isEmpty()) {
+            throw new NotFoundException(
+                    String.format("Characteristics survey object for " +
+                                   "objectType with id=%s and document type=%s not found", id, type));
+        }
+        return characteristics;
     }
 
     private void validateIds(List<Long> ids) {

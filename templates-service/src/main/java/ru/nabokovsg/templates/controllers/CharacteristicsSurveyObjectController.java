@@ -32,31 +32,23 @@ public class CharacteristicsSurveyObjectController {
     private final CharacteristicsSurveyObjectService service;
 
     @Operation(summary = "Данные шаблона новых характеристик объекта")
-    @PostMapping("/section")
-    public ResponseEntity<List<CharacteristicsSurveyObjectDto>> saveFromSectionTemplate(
-            @RequestParam(name = "sectionId")
-            @NotNull @Positive @Parameter(name = "Индентификатор раздела") Long sectionId,
+    @PostMapping
+    public ResponseEntity<List<CharacteristicsSurveyObjectDto>> save(
+            @RequestParam(name = "objectTypeId")
+            @NotNull @Positive @Parameter(name = "Индентификатор типа объекта") Long objectTypeId,
             @RequestBody @Valid
             @Parameter(name = "Характеристики объекта") List<NewCharacteristicsSurveyObjectDto> characteristicsDto) {
-        return ResponseEntity.ok().body(service.save("section", sectionId, characteristicsDto));
-    }
-
-    @Operation(summary = "Данные шаблона новых характеристик объекта")
-    @PostMapping("/protocol")
-    public ResponseEntity<List<CharacteristicsSurveyObjectDto>> saveFromProtocolTemplate(
-            @RequestParam(name = "protocolId")
-            @NotNull @Positive @Parameter(name = "Индентификатор протокола") Long protocolId,
-            @RequestBody @Valid
-            @Parameter(name = "Характеристики объекта") List<NewCharacteristicsSurveyObjectDto> characteristicsDto) {
-        return ResponseEntity.ok().body(service.save("protocol", protocolId, characteristicsDto));
+        return ResponseEntity.ok().body(service.save(objectTypeId, characteristicsDto));
     }
 
     @Operation(summary = "Изменение данных характеристик объекта")
     @PatchMapping
     public ResponseEntity<List<CharacteristicsSurveyObjectDto>> update(
+            @RequestParam(name = "objectTypeId")
+            @NotNull @Positive @Parameter(name = "Индентификатор типа объекта") Long objectTypeId,
             @RequestBody @Valid
             @Parameter(name = "Характеристики объекта") List<UpdateCharacteristicsSurveyObjectDto> characteristicsDto) {
-        return ResponseEntity.ok().body(service.update(characteristicsDto));
+        return ResponseEntity.ok().body(service.update(objectTypeId, characteristicsDto));
     }
 
     @Operation(summary = "Получение всехшаблонов характеристик объекта")

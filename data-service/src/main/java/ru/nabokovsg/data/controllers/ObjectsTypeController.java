@@ -57,8 +57,8 @@ public class ObjectsTypeController {
 
     @Operation(summary = "Получить все типы объектов")
     @GetMapping("/all")
-    public ResponseEntity<List<ObjectsTypeDto>> getAll(
-                                @RequestParam(name = "id") @Parameter(description = "Индентификаторы") List<Long> ids) {
+    public ResponseEntity<List<ShortObjectsTypeDto>> getAll(@RequestParam(name = "id", required = false)
+                                                       @Parameter(description = "Индентификаторы") List<Long> ids) {
         return ResponseEntity.ok().body(service.getAll(ids));
     }
 
