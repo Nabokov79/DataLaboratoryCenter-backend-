@@ -110,6 +110,9 @@ CREATE TABLE IF NOT EXISTS CHARACTERISTICS_TEMPLATES
     sequential_number         VARCHAR                                 NOT NULL,
     characteristic_name       VARCHAR                                 NOT NULL,
     sequential_number_visible BOOLEAN                                 NOT NULL,
+    object_type_id            BIGINT                                  NOT NULL,
+    use_in_report             BOOLEAN                                 NOT NULL,
+    use_in_protocol           BOOLEAN                                 NOT NULL,
     CONSTRAINT pk_characteristicsSurveyObject PRIMARY KEY (id)
 );
 
