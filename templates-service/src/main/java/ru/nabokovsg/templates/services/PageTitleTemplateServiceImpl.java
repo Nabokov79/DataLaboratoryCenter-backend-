@@ -58,4 +58,9 @@ public class PageTitleTemplateServiceImpl implements PageTitleTemplateService {
                 String.format("Page title template with id=%s not found for update", pageTitleDto.getId())
         );
     }
+
+    @Override
+    public Long getObjectTypeIdByReportId(Long reportId) {
+        return repository.findByReportId(reportId);
+    }
 }

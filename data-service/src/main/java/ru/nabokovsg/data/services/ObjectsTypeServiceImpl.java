@@ -107,23 +107,28 @@ public class ObjectsTypeServiceImpl implements ObjectsTypeService {
     }
 
     private List<ObjectsType> getAllByIds(List<Long> ids) {
-        List<ObjectsType> objectsTypes = repository.findAllById(ids);
+        List<ObjectsType> objectsTypes;
+        if(ids.isEmpty()) {
+            objectsTypes = repository.findAll();
+        } else {
+            objectsTypes = repository.findAllById(ids);
+        }
         if (objectsTypes.isEmpty()) {
-            throw new NotFoundException(String.format("ObjectsType with ids=%s not found", ids));
+            throw new NotFoundException("Objects type not found");
         }
         return objectsTypes;
     }
 
 
     @Override
-    public List<ObjectsTypeDto> getAll(List<Long> ids) {
+    public List<ShortObjectsTypeDto> getAll(List<Long> ids) {
         List<ObjectsType> objectsTypes;
-        if (ids.isEmpty()) {
+        if (ids == null) {
             objectsTypes = repository.findAll();
         } else {
             objectsTypes = repository.findAllById(ids);
         }
-        return objectsTypes.stream().map(mapper::mapToObjectTypeDto).toList();
+        return objectsTypes.stream().map(mapper::mapToShortObjectsTypeDto).toList();
     }
 
     @Override
