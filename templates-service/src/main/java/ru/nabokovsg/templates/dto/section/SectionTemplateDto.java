@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.nabokovsg.templates.dto.characteristics.CharacteristicsSurveyObjectDto;
+import ru.nabokovsg.templates.dto.passportData.DataOfSurveyObjectTemplateDto;
 import ru.nabokovsg.templates.dto.subsection.SubsectionTemplateDto;
 import ru.nabokovsg.templates.models.ProtocolReportTemplate;
 
@@ -29,5 +29,5 @@ public class SectionTemplateDto {
     @Schema(description = "Протоколы")
     private List<ProtocolReportTemplate> protocols;
     @Schema(description = "Характеристики объекта")
-    private List<CharacteristicsSurveyObjectDto> characteristics;
+    private List<DataOfSurveyObjectTemplateDto> dataSurveyObject;
 }

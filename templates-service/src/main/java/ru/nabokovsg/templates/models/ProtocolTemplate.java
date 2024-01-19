@@ -26,6 +26,10 @@ public class ProtocolTemplate {
     private String title;
     @Column(name = "heading")
     private String heading;
+    @Column(name = "is_protocol_survey")
+    private boolean isProtocolSurvey;
+    @Column(name = "is_protocol_quality")
+    private boolean isProtocolQuality;
     @OneToOne
     @JoinColumn(name = "header_id", referencedColumnName = "id")
     private HeaderTemplate header;
@@ -35,7 +39,7 @@ public class ProtocolTemplate {
             joinColumns = {@JoinColumn(name = "protocol_id")},
             inverseJoinColumns = {@JoinColumn(name = "characteristic_id")})
     @ToString.Exclude
-    private List<CharacteristicsSurveyObject> characteristics;
+    private List<DataOfSurveyObjectTemplate> characteristics;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "protocol_subsection_templates",

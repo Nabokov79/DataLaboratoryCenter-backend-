@@ -1,4 +1,4 @@
-package ru.nabokovsg.templates.dto.characteristics;
+package ru.nabokovsg.templates.dto.passportData;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -9,12 +9,12 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 @Schema(description = "Данные характеристики объекта")
-public class CharacteristicsSurveyObjectDto {
+public class DataOfSurveyObjectTemplateDto {
 
     @Schema(description = "Индентификатор")
     private Long id;
     @Schema(description = "Порядковый номер")
-    private String sequentialNumber;
+    private Integer sequentialNumber;
     @Schema(description = "Название характеристики")
     private String characteristicName;
     @Schema(description = "Указать порядковый номер в документе")

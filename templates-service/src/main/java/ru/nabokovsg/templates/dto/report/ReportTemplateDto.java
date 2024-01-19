@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import ru.nabokovsg.templates.dto.appendices.AppendicesTemplateDto;
+import ru.nabokovsg.templates.dto.section.SectionTemplateDto;
 import ru.nabokovsg.templates.models.AppendicesTemplate;
 import ru.nabokovsg.templates.models.PageTitleTemplate;
 import ru.nabokovsg.templates.models.SectionTemplate;
@@ -21,7 +23,7 @@ public class ReportTemplateDto {
     @Schema(description = "Титульный лист")
     private PageTitleTemplate pageTitle;
     @Schema(description = "Подрязделы")
-    private List<SectionTemplate> sections;
+    private List<SectionTemplateDto> sections;
     @Schema(description = "Приложения")
-    private List<AppendicesTemplate> appendices;
+    private List<AppendicesTemplateDto> appendices;
 }

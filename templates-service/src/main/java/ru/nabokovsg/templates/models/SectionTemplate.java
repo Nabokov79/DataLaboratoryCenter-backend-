@@ -27,7 +27,7 @@ public class SectionTemplate {
             joinColumns = {@JoinColumn(name = "section_id")},
             inverseJoinColumns = {@JoinColumn(name = "characteristic_id")})
     @ToString.Exclude
-    private List<CharacteristicsSurveyObject> characteristics;
+    private List<DataOfSurveyObjectTemplate> dataSurveyObject;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "section_subsection_templates",

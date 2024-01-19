@@ -1,4 +1,4 @@
-package ru.nabokovsg.templates.dto.characteristics;
+package ru.nabokovsg.templates.dto.passportData;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -14,20 +14,28 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Schema(description = "Данные новой характеристики объекта")
-public class NewCharacteristicsSurveyObjectDto {
+public class NewDataOfSurveyObjectTemplate {
 
     @Schema(description = "Порядковый номер")
     @NotNull(message = "sequential section number should not be null")
     @Positive(message = "sequential section number must be positive")
-    private String sequentialNumber;
+    private Integer sequentialNumber;
     @Schema(description = "Название характеристики")
     @NotBlank(message = "characteristic name should not be blank")
     private String characteristicName;
     @Schema(description = "Указать порядковый номер в документе")
     @NotNull(message = "sequential number visible should not be null")
     private boolean sequentialNumberVisible;
+    @Schema(description = "Указать порядковый номер в документе")
     @NotNull(message = "useInReport should not be null")
     private boolean useInReport;
-    @NotNull(message = "useInProtocol should not be null")
-    private boolean useInProtocol;
+    @Schema(description = "Указать порядковый номер в документе")
+    @NotNull(message = "useInProtocolSurvey should not be null")
+    private boolean useInProtocolSurvey;
+    @Schema(description = "Указать порядковый номер в документе")
+    @NotNull(message = "useInProtocolQuality should not be null")
+    private boolean useInProtocolQuality;
+    @Schema(description = "Указать местоположение объекта")
+    @NotNull(message = "location should not be null")
+    private boolean location;
 }

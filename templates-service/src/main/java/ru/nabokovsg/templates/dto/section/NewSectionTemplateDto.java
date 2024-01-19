@@ -25,13 +25,5 @@ public class NewSectionTemplateDto {
     private String sectionName;
     @Schema(description = "Указать характеристи объекта обследования")
     @NotNull(message = "characteristics should not be null")
-    private boolean characteristics;
-
-    @Override
-    public String toString() {
-        return "NewSectionTemplateDto{" +
-                "sequentialNumber=" + sequentialNumber +
-                ", sectionName='" + sectionName + '\'' +
-                '}';
-    }
+    private boolean characteristic;
 }

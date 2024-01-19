@@ -1,8 +1,11 @@
 package ru.nabokovsg.templates.services;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.nabokovsg.templates.dto.characteristics.CharacteristicsSurveyObjectDto;
+import ru.nabokovsg.templates.dto.passportData.DataOfSurveyObjectTemplateDto;
+import ru.nabokovsg.templates.dto.passportData.PredicateData;
 import ru.nabokovsg.templates.dto.section.NewSectionTemplateDto;
 import ru.nabokovsg.templates.dto.section.SectionTemplateDto;
 import ru.nabokovsg.templates.dto.section.UpdateSectionTemplateDto;
@@ -10,7 +13,6 @@ import ru.nabokovsg.templates.dto.subsection.ShortSubsectionTemplateDto;
 import ru.nabokovsg.templates.exceptions.NotFoundException;
 import ru.nabokovsg.templates.mappers.SectionTemplateMapper;
 import ru.nabokovsg.templates.models.*;
-import ru.nabokovsg.templates.models.enums.DataType;
 import ru.nabokovsg.templates.repository.SectionTemplateRepository;
 
 import java.util.*;
@@ -23,8 +25,9 @@ public class SectionTemplateServiceImpl implements SectionTemplateService {
     private final SectionTemplateRepository repository;
     private final SectionTemplateMapper mapper;
     private final ReportTemplateService reportService;
-    private final CharacteristicsSurveyObjectService characteristicsService;
+    private final DataOfSurveyObjectTemplateService passportTemplateService;
     private final PageTitleTemplateService pageTitleService;
+    private final EntityManager entityManager;
 
     @Override
     public List<SectionTemplateDto> save(Long reportId, List<NewSectionTemplateDto> sectionsDto) {
@@ -41,8 +44,8 @@ public class SectionTemplateServiceImpl implements SectionTemplateService {
         }
         sections.addAll(repository.saveAll(sectionsDto.stream().map(s -> {
             SectionTemplate section = mapper.mapToNewSectionTemplate(s);
-            if (s.isCharacteristics()) {
-                section.setCharacteristics(getCharacteristicsSurveyObject(
+            if (s.isCharacteristic()) {
+                section.setDataSurveyObject(getCharacteristicsSurveyObject(
                         pageTitleService.getObjectTypeIdByReportId(reportId))
                 );
             }
@@ -62,16 +65,11 @@ public class SectionTemplateServiceImpl implements SectionTemplateService {
         List<SectionTemplate> sections =  repository.findAllById(ids);
         Map<Long, SectionTemplate> sectionsDb = sections.stream()
                                                         .collect(Collectors.toMap(SectionTemplate::getId, s -> s));
-        List<CharacteristicsSurveyObject> characteristics = sections.stream()
-                                                                    .map(SectionTemplate::getCharacteristics)
-                                                                    .filter(Objects::nonNull)
-                                                                    .flatMap(Collection::stream)
-                                                                    .toList();
         return repository.saveAll(sectionsDto.stream()
                         .map(s ->  {
                             SectionTemplate section = mapper.mapToUpdateSectionTemplate(sectionsDb.get(s.getId()), s);
-                            if (s.isCharacteristics()) {
-                                section.setCharacteristics(characteristics);
+                            if (s.isCharacteristic() && section.getDataSurveyObject() != null) {
+                                section.setDataSurveyObject(getCharacteristicsSurveyObject(getReportIdByPredicate(ids)));
                             }
                             return section;
                         })
@@ -84,10 +82,10 @@ public class SectionTemplateServiceImpl implements SectionTemplateService {
     @Override
     public SectionTemplateDto get(Long id) {
         SectionTemplateDto section = mapper.mapToSectionTemplateDto(getById(id));
-        if (!section.getCharacteristics().isEmpty()) {
-            section.setCharacteristics(
-                    section.getCharacteristics().stream()
-                            .sorted(Comparator.comparing(CharacteristicsSurveyObjectDto::getId))
+        if (!section.getDataSurveyObject().isEmpty()) {
+            section.setDataSurveyObject(
+                    section.getDataSurveyObject().stream()
+                            .sorted(Comparator.comparing(DataOfSurveyObjectTemplateDto::getId))
                             .toList());
         }
         return section;
@@ -114,20 +112,6 @@ public class SectionTemplateServiceImpl implements SectionTemplateService {
         repository.save(section);
     }
 
-    @Override
-    public void addCharacteristicsSurveyObject(Long id, List<CharacteristicsSurveyObject> characteristics) {
-        SectionTemplate section = getById(id);
-        section.getCharacteristics().addAll(characteristics);
-        repository.save(section);
-    }
-
-    @Override
-    public void addRecommendation(Long id, List<RecommendationTemplate> recommendations) {
-        SectionTemplate section = getById(id);
-        section.getRecommendations().addAll(recommendations);
-        repository.save(section);
-    }
-
     private SectionTemplate getById(Long id) {
         return repository.findById(id).orElseThrow(
                 () -> new NotFoundException(
@@ -146,7 +130,17 @@ public class SectionTemplateServiceImpl implements SectionTemplateService {
         }
     }
 
-    private List<CharacteristicsSurveyObject> getCharacteristicsSurveyObject(Long objectTypeId) {
-        return characteristicsService.getAllByPredicate(objectTypeId, DataType.SECTION);
+    private List<DataOfSurveyObjectTemplate> getCharacteristicsSurveyObject(Long objectTypeId) {
+        return passportTemplateService.getAllByPredicate(objectTypeId, new PredicateData(true, false, false));
+    }
+
+    private Long getReportIdByPredicate(List<Long> ids) {
+        QReportTemplate report = QReportTemplate.reportTemplate;
+        QSectionTemplate section = QSectionTemplate.sectionTemplate;
+        return new JPAQueryFactory(entityManager).from(report)
+                                                 .select(report.id)
+                                                 .join(report.sections, section)
+                                                 .where(section.id.in(ids))
+                                                 .fetchOne();
     }
 }

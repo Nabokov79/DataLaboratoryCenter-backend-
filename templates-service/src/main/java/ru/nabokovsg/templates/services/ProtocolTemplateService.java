@@ -22,11 +22,7 @@ public interface ProtocolTemplateService {
 
     void addSubsection(Long id, SubsectionTemplate subsection);
 
-    void addCharacteristicsSurveyObject(Long id, List<CharacteristicsSurveyObject> characteristics);
-
     void addConclusion(Long id, ConclusionTemplate conclusion);
 
     void addAppendices(Long id, AppendicesTemplate appendices);
-
-    void addRecommendation(Long id, List<RecommendationTemplate> recommendations);
 }

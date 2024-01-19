@@ -29,6 +29,6 @@ public class UpdateSectionTemplateDto {
     private String sectionName;
     @Schema(description = "Указать характеристи объекта обследования")
     @NotNull(message = "characteristics should not be null")
-    private boolean characteristics;
+    private boolean characteristic;
 
 }

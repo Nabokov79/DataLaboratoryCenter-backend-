@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.nabokovsg.templates.dto.recommendation.NewRecommendationTemplateDto;
-import ru.nabokovsg.templates.dto.recommendation.RecommendationDataTemplateDto;
 import ru.nabokovsg.templates.dto.recommendation.RecommendationTemplateDto;
 import ru.nabokovsg.templates.dto.recommendation.UpdateRecommendationTemplateDto;
 import ru.nabokovsg.templates.services.RecommendationTemplateService;
@@ -46,14 +45,6 @@ public class RecommendationTemplateController {
             @RequestBody @Valid
             @Parameter(name = "Рекомендация") UpdateRecommendationTemplateDto recommendationDto) {
         return ResponseEntity.ok().body(service.update(recommendationDto));
-    }
-
-    @Operation(summary = "Добавление рекомендации к отчету или протоколу")
-    @PostMapping("/add")
-    public ResponseEntity<List<RecommendationTemplateDto>> addToDocumentTemplate(
-            @RequestBody @Valid
-            @Parameter(name = "Рекомендация") RecommendationDataTemplateDto recommendationDto) {
-        return ResponseEntity.ok().body(service.addToDocumentTemplate(recommendationDto));
     }
 
     @Operation(summary = "Получить рекомендации по типу объекта")

@@ -8,7 +8,7 @@ import ru.nabokovsg.templates.dto.protocol.NewProtocolTemplateDto;
 import ru.nabokovsg.templates.dto.protocol.ProtocolTemplateDto;
 import ru.nabokovsg.templates.dto.protocol.ShortProtocolTemplateDto;
 import ru.nabokovsg.templates.dto.protocol.UpdateProtocolTemplateDto;
-import ru.nabokovsg.templates.models.CharacteristicsSurveyObject;
+import ru.nabokovsg.templates.models.DataOfSurveyObjectTemplate;
 import ru.nabokovsg.templates.models.HeaderTemplate;
 import ru.nabokovsg.templates.models.ProtocolTemplate;
 
@@ -33,7 +33,7 @@ public interface ProtocolTemplateMapper {
     ProtocolTemplate mapToProtocolTemplate(ProtocolTemplate protocol
                                          , String objectType
                                          , ReportingDocumentDto reportingDocumentDto
-                                         , List<CharacteristicsSurveyObject> characteristics);
+                                         , List<DataOfSurveyObjectTemplate> characteristics);
 
     ShortProtocolTemplateDto mapToShortProtocolTemplateDto(ProtocolTemplate protocolTemplate);
 

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.nabokovsg.templates.client.TemplateClient;
 import ru.nabokovsg.templates.dto.clientDto.ReportingDocumentDto;
+import ru.nabokovsg.templates.dto.passportData.PredicateData;
 import ru.nabokovsg.templates.dto.protocol.NewProtocolTemplateDto;
 import ru.nabokovsg.templates.dto.protocol.ProtocolTemplateDto;
 import ru.nabokovsg.templates.dto.protocol.ShortProtocolTemplateDto;
@@ -11,7 +12,6 @@ import ru.nabokovsg.templates.dto.protocol.UpdateProtocolTemplateDto;
 import ru.nabokovsg.templates.exceptions.NotFoundException;
 import ru.nabokovsg.templates.mappers.ProtocolTemplateMapper;
 import ru.nabokovsg.templates.models.*;
-import ru.nabokovsg.templates.models.enums.DataType;
 import ru.nabokovsg.templates.repository.ProtocolTemplateRepository;
 import ru.nabokovsg.templates.services.builders.StringBuilderService;
 
@@ -26,7 +26,7 @@ public class ProtocolTemplateServiceImpl implements ProtocolTemplateService {
     private final TemplateClient client;
     private final HeaderTemplateService headerService;
     private final StringBuilderService builderService;
-    private final CharacteristicsSurveyObjectService characteristicsService;
+    private final DataOfSurveyObjectTemplateService passportTemplateService;
 
     @Override
     public ShortProtocolTemplateDto save(NewProtocolTemplateDto protocolDto) {
@@ -39,7 +39,9 @@ public class ProtocolTemplateServiceImpl implements ProtocolTemplateService {
             template = mapper.mapToProtocolTemplate(template
                              , builderService.buildFromObjectsType(client.getObjectsType(protocolDto.getObjectTypeId()))
                              , getReportingDocument(protocolDto.getReportingDocumentId())
-                             , getCharacteristicsSurveyObject(protocolDto.getObjectTypeId()));
+                             , getDataOfSurveyObjectPassportTemplate(protocolDto.getObjectTypeId()
+                            , protocolDto.isProtocolSurvey()
+                            , protocolDto.isProtocolQuality()));
         }
         return mapper.mapToShortProtocolTemplateDto(repository.save(template));
     }
@@ -89,13 +91,6 @@ public class ProtocolTemplateServiceImpl implements ProtocolTemplateService {
     }
 
     @Override
-    public void addCharacteristicsSurveyObject(Long id, List<CharacteristicsSurveyObject> characteristics) {
-        ProtocolTemplate protocol = getById(id);
-        protocol.getCharacteristics().addAll(characteristics);
-        repository.save(protocol);
-    }
-
-    @Override
     public void addConclusion(Long id, ConclusionTemplate conclusion) {
         ProtocolTemplate protocol = getById(id);
         protocol.setConclusions(conclusion);
@@ -109,13 +104,6 @@ public class ProtocolTemplateServiceImpl implements ProtocolTemplateService {
         repository.save(protocol);
     }
 
-    @Override
-    public void addRecommendation(Long id,  List<RecommendationTemplate> recommendations) {
-        ProtocolTemplate protocol = getById(id);
-        protocol.getRecommendations().addAll(recommendations);
-        repository.save(protocol);
-    }
-
     private ProtocolTemplate getById(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format("Protocol template with id=%s not found", id)));
@@ -125,7 +113,10 @@ public class ProtocolTemplateServiceImpl implements ProtocolTemplateService {
         return client.getReportingDocument(id);
     }
 
-    private List<CharacteristicsSurveyObject> getCharacteristicsSurveyObject(Long objectTypeId) {
-        return characteristicsService.getAllByPredicate(objectTypeId, DataType.PROTOCOL);
+    private List<DataOfSurveyObjectTemplate> getDataOfSurveyObjectPassportTemplate(Long objectTypeId
+                                                                                  , boolean isProtocolSurvey
+                                                                                  , boolean isProtocolQuality) {
+        return passportTemplateService.getAllByPredicate(objectTypeId
+                                            , new PredicateData(false, isProtocolSurvey, isProtocolQuality));
     }
 }
