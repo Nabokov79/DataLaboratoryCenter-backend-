@@ -8,8 +8,7 @@ import ru.nabokovsg.data.dto.employee.ShortEmployeeDto;
 import ru.nabokovsg.data.dto.employee.UpdateEmployeeDto;
 import ru.nabokovsg.data.exceptions.NotFoundException;
 import ru.nabokovsg.data.mappers.*;
-import ru.nabokovsg.data.models.Employee;
-import ru.nabokovsg.data.models.MeasuringTool;
+import ru.nabokovsg.data.models.*;
 import ru.nabokovsg.data.repository.CertificateRepository;
 import ru.nabokovsg.data.repository.EmployeeRepository;
 import ru.nabokovsg.data.repository.MeasuringToolRepository;
@@ -27,7 +26,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final CertificateRepository certificateRepository;
     private final MeasuringToolRepository measuringToolRepository;
     private final ContactService contactService;
-    private final ContactMapper contactMapper;
     private final OrganizationService organizationService;
     private final OrganizationMapper organizationMapper;
     private final BranchService branchService;
@@ -37,14 +35,18 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public ShortEmployeeDto save(NewEmployeeDto employeeDto) {
-        Employee employee = mapper.mapToEmployee(employeeDto);
-        if (employeeDto.getContact() != null) {
-            employee.setContact(contactService.save(employeeDto.getContact()));
+        Employee employee = repository.findByNameAndPatronymicAndSurname(employeeDto.getName()
+                                                                       , employeeDto.getPatronymic()
+                                                                       , employeeDto.getSurname());
+        if (employee == null) {
+            employee = mapper.mapToNewEmployee(employeeDto
+                                             , getOrganization(employeeDto.getOrganizationId())
+                                             , getBranch(employeeDto.getBranchId())
+                                             , getDepartment(employeeDto.getDepartmentId()));
+            if (employeeDto.getContact() != null) {
+                employee.setContact(contactService.save(employeeDto.getContact()));
+            }
         }
-        set(employee
-                , employeeDto.getOrganizationId()
-                , employeeDto.getBranchId()
-                , employeeDto.getDepartmentId());
         return mapper.mapToEmployeeShortDto(repository.save(employee));
     }
 
@@ -53,14 +55,14 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (!repository.existsById(employeeDto.getId())) {
             throw new NotFoundException(String.format("employee with id=%s not found for update",employeeDto.getId()));
         }
-        Employee employee = mapper.mapToUpdateEmployee(employeeDto);
+        Employee employee = mapper.mapToUpdateEmployee(employeeDto
+                                                     , getOrganization(employeeDto.getOrganizationId())
+                                                     , getBranch(employeeDto.getBranchId())
+                                                     , getDepartment(employeeDto.getDepartmentId()));
         if (employeeDto.getContact() != null) {
             employee.setContact(contactService.update(employeeDto.getContact()));
         }
-        return mapper.mapToEmployeeShortDto(repository.save(set(employee
-                , employeeDto.getOrganizationId()
-                , employeeDto.getBranchId()
-                , employeeDto.getDepartmentId())));
+        return mapper.mapToEmployeeShortDto(repository.save(employee));
     }
 
     @Override
@@ -101,10 +103,15 @@ public class EmployeeServiceImpl implements EmployeeService {
         measuringToolRepository.saveAll(measuringTools);
     }
 
-    private Employee set(Employee employee, Long organizationId, Long branchId,  Long departmentId) {
-        employee.setOrganization(organizationMapper.mapToOrganization(organizationService.get(organizationId)));
-        employee.setBranch(branchMapper.mapToBranch(branchService.get(branchId)));
-        employee.setDepartment(departmentMapper.mapToDepartment(departmentService.get(departmentId)));
-        return employee;
+    private Organization getOrganization(Long organizationId) {
+        return organizationMapper.mapToOrganization(organizationService.get(organizationId));
+    }
+
+    private Branch getBranch(Long branchId) {
+        return branchMapper.mapToBranch(branchService.get(branchId));
+    }
+
+    private Department getDepartment(Long departmentId) {
+        return departmentMapper.mapToDepartment(departmentService.get(departmentId));
     }
 }

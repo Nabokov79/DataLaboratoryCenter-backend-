@@ -9,6 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PredicateData {
 
+    private Long objectTypeId;
     private boolean useInReport;
     private boolean useInProtocolSurvey;
     private boolean useInProtocolQuality;

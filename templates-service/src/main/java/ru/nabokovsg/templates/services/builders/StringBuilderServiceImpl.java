@@ -28,10 +28,13 @@ public class StringBuilderServiceImpl implements StringBuilderService {
 
     @Override
     public String buildFromLicense(List<LicenseDto> licenses) {
-        LicenseDto license = licenses.stream()
+        LicenseDto license = null;
+        List<LicenseDto> licensesDto = licenses.stream()
                 .filter(l -> l.getEndData().isAfter(LocalDate.now()))
-                .toList()
-                .get(0);
+                .toList();
+        if (!licensesDto.isEmpty()) {
+            license = licensesDto.get(0);
+        }
         if (license == null) {
             license = licenses.stream()
                     .max(Comparator.comparing(LicenseDto::getEndData))

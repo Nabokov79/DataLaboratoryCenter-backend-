@@ -116,7 +116,8 @@ public class ProtocolTemplateServiceImpl implements ProtocolTemplateService {
     private List<DataOfSurveyObjectTemplate> getDataOfSurveyObjectPassportTemplate(Long objectTypeId
                                                                                   , boolean isProtocolSurvey
                                                                                   , boolean isProtocolQuality) {
-        return passportTemplateService.getAllByPredicate(objectTypeId
-                                            , new PredicateData(false, isProtocolSurvey, isProtocolQuality));
+        return passportTemplateService.getAllDataOfSurveyObjectTemplate(
+                new PredicateData(objectTypeId, false, isProtocolSurvey, isProtocolQuality)
+        );
     }
 }

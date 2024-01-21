@@ -131,7 +131,8 @@ public class SectionTemplateServiceImpl implements SectionTemplateService {
     }
 
     private List<DataOfSurveyObjectTemplate> getCharacteristicsSurveyObject(Long objectTypeId) {
-        return passportTemplateService.getAllByPredicate(objectTypeId, new PredicateData(true, false, false));
+        return passportTemplateService.getAllDataOfSurveyObjectTemplate(
+                new PredicateData(objectTypeId, true, false, false));
     }
 
     private Long getReportIdByPredicate(List<Long> ids) {

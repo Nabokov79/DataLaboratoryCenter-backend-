@@ -56,13 +56,7 @@ public class BranchServiceImpl implements BranchService {
 
     @Override
     public BranchDto get(Long id) {
-        Branch branch = getById(id);
-        branch.setDepartments(branch.getDepartments()
-              .stream()
-              .filter(d -> d.getSupplyArea() != null)
-              .sorted((d1, d2) -> d1.getSupplyArea().compareToIgnoreCase(d2.getSupplyArea()))
-              .toList());
-        return mapper.mapToBranchDto(branch);
+        return mapper.mapToBranchDto(getById(id));
     }
 
     @Override

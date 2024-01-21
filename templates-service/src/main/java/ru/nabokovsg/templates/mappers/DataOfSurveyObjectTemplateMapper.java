@@ -1,21 +1,19 @@
 package ru.nabokovsg.templates.mappers;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import ru.nabokovsg.templates.dto.passportData.DataOfSurveyObjectTemplateDto;
-import ru.nabokovsg.templates.dto.passportData.NewDataOfSurveyObjectTemplate;
-import ru.nabokovsg.templates.dto.passportData.UpdateDataOfSurveyObjectTemplate;
+import ru.nabokovsg.templates.dto.passportData.*;
 import ru.nabokovsg.templates.models.DataOfSurveyObjectTemplate;
 
 @Mapper(componentModel = "spring")
 public interface DataOfSurveyObjectTemplateMapper {
 
-    @Mapping(target = "id", ignore = true)
-    DataOfSurveyObjectTemplate mapToNewCharacteristicsSurveyObject(
-                                                            NewDataOfSurveyObjectTemplate characteristicDto);
+    DataOfSurveyObjectTemplate mapToNewDataOfSurveyObjectTemplate(NewPassportDataTemplateDto passportData, PredicateData predicate);
 
-    DataOfSurveyObjectTemplate mapToUpdateCharacteristicsSurveyObject(
-                                                                UpdateDataOfSurveyObjectTemplate characteristicDto);
+    DataOfSurveyObjectTemplate mapToUpdateDataOfSurveyObjectTemplate(UpdatePassportDataTemplateDto passportData, PredicateData predicate);
 
-    DataOfSurveyObjectTemplateDto mapToCharacteristicsSurveyObjectDto(DataOfSurveyObjectTemplate characteristic);
+    PredicateData mapToPredicateDataForNewData(NewDataOfSurveyObjectTemplateDto dataOfSurveyObjectDto);
+
+    PredicateData mapToPredicateDataForUpdateData(UpdateDataOfSurveyObjectTemplateDto characteristicDto);
+
+    DataOfSurveyObjectTemplateDto mapToDataOfSurveyObjectTemplateDto(DataOfSurveyObjectTemplate characteristic);
 }

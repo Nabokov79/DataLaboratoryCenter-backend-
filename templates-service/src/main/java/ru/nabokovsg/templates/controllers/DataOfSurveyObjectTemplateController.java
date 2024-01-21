@@ -12,8 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.nabokovsg.templates.dto.passportData.DataOfSurveyObjectTemplateDto;
-import ru.nabokovsg.templates.dto.passportData.NewDataOfSurveyObjectTemplate;
-import ru.nabokovsg.templates.dto.passportData.UpdateDataOfSurveyObjectTemplate;
+import ru.nabokovsg.templates.dto.passportData.NewDataOfSurveyObjectTemplateDto;
+import ru.nabokovsg.templates.dto.passportData.UpdateDataOfSurveyObjectTemplateDto;
 import ru.nabokovsg.templates.services.DataOfSurveyObjectTemplateService;
 
 import java.util.List;
@@ -34,21 +34,17 @@ public class DataOfSurveyObjectTemplateController {
     @Operation(summary = "Данные шаблона новых характеристик объекта")
     @PostMapping
     public ResponseEntity<List<DataOfSurveyObjectTemplateDto>> save(
-            @RequestParam(name = "objectTypeId")
-            @NotNull @Positive @Parameter(name = "Индентификатор типа объекта") Long objectTypeId,
             @RequestBody @Valid
-            @Parameter(name = "Шаблон данных паспорта") List<NewDataOfSurveyObjectTemplate> characteristicsDto) {
-        return ResponseEntity.ok().body(service.save(objectTypeId, characteristicsDto));
+            @Parameter(name = "Шаблон данных паспорта") NewDataOfSurveyObjectTemplateDto dataOfSurveyObjectDto) {
+        return ResponseEntity.ok().body(service.save(dataOfSurveyObjectDto));
     }
 
     @Operation(summary = "Изменение данных характеристик объекта")
     @PatchMapping
     public ResponseEntity<List<DataOfSurveyObjectTemplateDto>> update(
-            @RequestParam(name = "objectTypeId")
-            @NotNull @Positive @Parameter(name = "Индентификатор типа объекта") Long objectTypeId,
             @RequestBody @Valid
-            @Parameter(name = "Шаблон данных паспорта") List<UpdateDataOfSurveyObjectTemplate> characteristicsDto) {
-        return ResponseEntity.ok().body(service.update(objectTypeId, characteristicsDto));
+            @Parameter(name = "Шаблон данных паспорта") UpdateDataOfSurveyObjectTemplateDto dataOfSurveyObjectDto) {
+        return ResponseEntity.ok().body(service.update(dataOfSurveyObjectDto));
     }
 
     @Operation(summary = "Получение всех шаблонов данных паспорта объекта")

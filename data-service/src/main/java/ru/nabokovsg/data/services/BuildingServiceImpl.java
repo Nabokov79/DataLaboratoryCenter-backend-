@@ -2,6 +2,7 @@ package ru.nabokovsg.data.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.nabokovsg.data.dto.ObjectsIds;
 import ru.nabokovsg.data.dto.building.BuildingDto;
 import ru.nabokovsg.data.dto.building.NewBuildingDto;
 import ru.nabokovsg.data.dto.building.UpdateBuildingDto;
@@ -31,19 +32,32 @@ public class BuildingServiceImpl implements BuildingService {
 
     @Override
     public List<BuildingDto> save(List<NewBuildingDto> buildingsDto) {
-        DataBuilder builder = factory.getBuilder(buildingsDto.stream()
-                                                             .map(mapper::mapFromNewBuildingDto)
-                                                             .toList()
-                                               , BuilderType.BUILDING);
-        return getListDto(repository.saveAll(
-                             buildingsDto.stream()
-                                         .map(b -> {
-                                              Building building = mapper.mapToNewBuilding(b);
-                                              building.setDepartment(builder.getDepartments().get(b.getDepartmentId()));
-                                              building.setAddress(builder.getAddresses().get(b.getAddressId()));
-                                              return building;
-                                              })
-                                         .toList()));
+        List<ObjectsIds> ids = buildingsDto.stream()
+                                            .map(mapper::mapFromNewBuildingDto)
+                                            .toList();
+        Map<Long, Building> buildings = repository.findAllByAddressId(
+                                                                     ids.stream()
+                                                                        .map(ObjectsIds::getAddressId)
+                                                                        .toList())
+                                                        .stream()
+                                                        .collect(Collectors.toMap(b -> b.getAddress().getId(), b -> b));
+        if (!buildings.isEmpty()) {
+            buildingsDto = buildingsDto.stream()
+                                       .filter(d -> !buildings.containsKey(d.getAddressId()))
+                                       .toList();
+        }
+        if (!buildingsDto.isEmpty()) {
+            DataBuilder builder = factory.getBuilder(ids, BuilderType.BUILDING);
+            repository.saveAll(
+                    buildingsDto.stream()
+                            .map(b -> mapper.mapToNewBuilding(b
+                                    , builder.getAddresses().get(b.getAddressId())
+                                    , builder.getDepartments().get(b.getDepartmentId()))
+                           )
+                            .toList()).forEach(d -> buildings.put(d.getAddress().getId(), d));
+        }
+
+        return getListDto(buildings.values().stream().toList());
     }
 
     @Override
@@ -55,12 +69,10 @@ public class BuildingServiceImpl implements BuildingService {
                                                , BuilderType.BUILDING);
         return getListDto(repository.saveAll(buildingsDto
                                                         .stream()
-                                                        .map(b -> {
-                                                           Building building = mapper.mapToUpdateBuilding(b);
-                                                            building.setDepartment(builder.getDepartments().get(b.getDepartmentId()));
-                                                            building.setAddress(builder.getAddresses().get(b.getAddressId()));
-                                                           return building;
-                                                        })
+                                                        .map(b -> mapper.mapToUpdateBuilding(b
+                                                                , builder.getAddresses().get(b.getAddressId())
+                                                                , builder.getDepartments().get(b.getDepartmentId()))
+                                                        )
                                                         .toList()));
     }
 
