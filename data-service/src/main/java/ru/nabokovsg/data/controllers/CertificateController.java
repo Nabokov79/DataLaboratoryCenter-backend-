@@ -27,7 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Validated
 @Tag(name="Сертификаты сотрудников",
-     description="API для работы с данными сертификатов сотруднаков")
+     description="API для работы с данными аттестации сотрудника")
 public class CertificateController {
 
     private final CertificateService service;

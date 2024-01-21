@@ -22,7 +22,7 @@ public class DataServiceClient {
                 .getBody();
     }
 
-    public BranchDto getBranch(String uri) {
+    public BranchDto getBranch(final String uri) {
         return Objects.requireNonNull(webClient.get()
                 .uri(uri)
                 .retrieve()
@@ -31,7 +31,7 @@ public class DataServiceClient {
                 .getBody();
     }
 
-    public DepartmentDto getDepartment(String uri) {
+    public DepartmentDto getDepartment(final String uri) {
         return Objects.requireNonNull(webClient.get()
                 .uri(uri)
                 .retrieve()
@@ -40,7 +40,7 @@ public class DataServiceClient {
                 .getBody();
     }
 
-    public ReportingDocumentDto getReportingDocument(String uri){
+    public ReportingDocumentDto getReportingDocument(final String uri) {
         return  Objects.requireNonNull(webClient.get()
                 .uri(uri)
                 .retrieve()
@@ -49,7 +49,7 @@ public class DataServiceClient {
                 .getBody();
     }
 
-    public ObjectsTypeDto getObjectsType(String uri) {
+    public ObjectsTypeDto getObjectsType(final String uri) {
         return  Objects.requireNonNull(webClient.get()
                 .uri(uri)
                 .retrieve()
@@ -58,7 +58,7 @@ public class DataServiceClient {
                 .getBody();
     }
 
-    public ShortEmployeeDto getShortEmployee(String uri) {
+    public ShortEmployeeDto getShortEmployee(final String uri) {
         return  Objects.requireNonNull(webClient.get()
                 .uri(uri)
                 .retrieve()
@@ -67,7 +67,7 @@ public class DataServiceClient {
                 .getBody();
     }
 
-    public EmployeeDto getEmployee(String uri) {
+    public EmployeeDto getEmployee(final String uri) {
         return  Objects.requireNonNull(webClient.get()
                 .uri(uri)
                 .retrieve()

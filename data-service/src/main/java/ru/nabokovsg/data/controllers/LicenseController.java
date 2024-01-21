@@ -26,7 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Validated
 @Tag(name="Лицензия",
-        description="API для работы с данными лицензии")
+        description="API для работы с данными лицензии/сертификата")
 public class LicenseController {
 
     private final LicenseService service;
