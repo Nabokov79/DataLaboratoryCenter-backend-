@@ -26,7 +26,7 @@ public class NewPassportDataTemplateDto {
     @Schema(description = "Указать порядковый номер в документе")
     @NotNull(message = "sequential number visible should not be null")
     private boolean sequentialNumberVisible;
-    @Schema(description = "Указать местоположение объекта")
+    @Schema(description = "Указать местоположение объекта(адрес)")
     @NotNull(message = "location should not be null")
     private boolean location;
 }

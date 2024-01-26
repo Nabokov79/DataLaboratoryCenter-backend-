@@ -1,22 +1,20 @@
-package ru.nabokovsg.data.dto.objectsSurveyElementData;
+package ru.nabokovsg.data.dto.rejection.surveyObjectElement;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Setter
 @Getter
 @AllArgsConstructor
-@Schema(description = "Данные для изменения информации об элементе объекта обследования")
-public class UpdateObjectsSurveyElementDataDto {
+@NoArgsConstructor
+@Schema(description = "Новые данные элементов объекта обследования")
+public class NewSurveyObjectElementDataDto {
 
-    @Schema(description = "Индентификатор")
-    @NotNull(message = "id must not be null")
-    @Positive(message = "id must be negative")
-    private Long id;
     @Schema(description = "Индентификатор элемента объекта обследования")
     @NotNull(message = "element id must not be null")
     @Positive(message = "element id must be negative")
@@ -35,10 +33,4 @@ public class UpdateObjectsSurveyElementDataDto {
     private Float pipeWallThicknessMax;
     @Schema(description = "Предельно-минимальное допустимое значение в процентах от номинальной толщины элемента")
     private Float minInPercent;
-    @Schema(description = "Предельно-минимальное допустимое значение в миллиметрах")
-    private Float min;
-    @Schema(description = "допустимое отклонение от нормы")
-    @NotNull(message = "measurement error should not be blank")
-    @Positive(message = "measurement error can only be positive")
-    private Float measurementError;
 }

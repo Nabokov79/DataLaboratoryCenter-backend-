@@ -1,10 +1,11 @@
-package ru.nabokovsg.data.dto.objectsSurveyElementData;
+package ru.nabokovsg.data.dto.rejection.surveyObjectElement;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import ru.nabokovsg.data.dto.element.ShortElementDto;
+import ru.nabokovsg.data.dto.surveyObjectElementData.rejection.ElementRejectionParametersDto;
 import ru.nabokovsg.data.dto.subElement.SubElementDto;
 
 @Setter
@@ -27,4 +28,6 @@ public class SurveyObjectElementDataDto {
     private Integer pipeDiameterMax;
     @Schema(description = "Толщина максимального диаметра элемента объекта обследования")
     private Float pipeWallThicknessMax;
+    @Schema(description = "Параметры браковки элемента")
+    private ElementRejectionParametersDto rejectionParameters;
 }

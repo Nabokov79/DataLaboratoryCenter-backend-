@@ -1,12 +1,10 @@
 package ru.nabokovsg.data.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -28,6 +26,13 @@ public class SurveyObject {
     private Integer volume;
     @OneToMany(mappedBy = "objectSurvey", fetch = FetchType.LAZY)
     private List<SurveyObjectElementData> elements;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "survey_objects_rejection_parameters",
+            joinColumns = {@JoinColumn(name = "survey_object_id")},
+            inverseJoinColumns = {@JoinColumn(name = "rejection_parameter_id")})
+    @ToString.Exclude
+    private Set<GeodesicRejectionParameters> rejectionParameters;
     @ManyToOne
     @JoinColumn(name = "building_id", referencedColumnName = "id")
     private Building building;

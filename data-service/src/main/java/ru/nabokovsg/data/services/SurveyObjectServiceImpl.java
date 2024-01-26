@@ -9,10 +9,7 @@ import ru.nabokovsg.data.dto.surveyObject.SurveyObjectDto;
 import ru.nabokovsg.data.dto.surveyObject.UpdateSurveyObjectDto;
 import ru.nabokovsg.data.exceptions.NotFoundException;
 import ru.nabokovsg.data.mappers.SurveyObjectMapper;
-import ru.nabokovsg.data.models.Building;
-import ru.nabokovsg.data.models.DataBuilder;
-import ru.nabokovsg.data.models.ObjectsType;
-import ru.nabokovsg.data.models.SurveyObject;
+import ru.nabokovsg.data.models.*;
 import ru.nabokovsg.data.models.enums.BuilderType;
 import ru.nabokovsg.data.repository.SurveyObjectRepository;
 import ru.nabokovsg.data.services.builder.DataFactory;
@@ -20,6 +17,7 @@ import ru.nabokovsg.data.services.builder.DataFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -67,11 +65,7 @@ public class SurveyObjectServiceImpl implements SurveyObjectService {
 
     @Override
     public SurveyObjectDto get(Long id) {
-        return mapper.mapToObjectSurveyDto(
-                repository.findById(id)
-                        .orElseThrow(
-                                () -> new NotFoundException(String.format("ObjectSurvey with id=%s not found", id)))
-        );
+        return mapper.mapToObjectSurveyDto(getById(id));
     }
 
     @Override
@@ -86,6 +80,20 @@ public class SurveyObjectServiceImpl implements SurveyObjectService {
             return;
         }
         throw new NotFoundException(String.format("objects with id= %s not found for delete", id));
+    }
+
+    @Override
+    public void addGeodesicRejectionParameters(Long surveyObjectId
+                                             , Set<GeodesicRejectionParameters> rejectionParameters) {
+        SurveyObject surveyObject = getById(surveyObjectId);
+        surveyObject.setRejectionParameters(rejectionParameters);
+        repository.save(surveyObject);
+    }
+
+    private SurveyObject getById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(
+                        () -> new NotFoundException(String.format("ObjectSurvey with id=%s not found", id)));
     }
 
     private void validateIds(List<Long> ids) {

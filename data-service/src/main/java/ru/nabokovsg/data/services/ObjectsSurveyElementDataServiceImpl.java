@@ -2,15 +2,12 @@ package ru.nabokovsg.data.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.nabokovsg.data.dto.objectsSurveyElementData.NewObjectsSurveyElementDataDto;
-import ru.nabokovsg.data.dto.objectsSurveyElementData.SurveyObjectElementDataDto;
-import ru.nabokovsg.data.dto.objectsSurveyElementData.UpdateObjectsSurveyElementDataDto;
+import ru.nabokovsg.data.dto.rejection.surveyObjectElement.NewSurveyObjectElementDataDto;
+import ru.nabokovsg.data.dto.rejection.surveyObjectElement.SurveyObjectElementDataDto;
+import ru.nabokovsg.data.dto.rejection.surveyObjectElement.UpdateSurveyObjectElementDataDto;
 import ru.nabokovsg.data.exceptions.NotFoundException;
-import ru.nabokovsg.data.mappers.ObjectsSurveyElementDataMapper;
-import ru.nabokovsg.data.models.Element;
-import ru.nabokovsg.data.models.ObjectsSurveyElementData;
-import ru.nabokovsg.data.models.SubElement;
-import ru.nabokovsg.data.models.SurveyObjectElementData;
+import ru.nabokovsg.data.mappers.SurveyObjectElementDataMapper;
+import ru.nabokovsg.data.models.*;
 import ru.nabokovsg.data.repository.ObjectsSurveyElementDataRepository;
 import ru.nabokovsg.data.services.builder.RepositoryRequestService;
 
@@ -25,15 +22,15 @@ import java.util.stream.Collectors;
 public class ObjectsSurveyElementDataServiceImpl implements ObjectsSurveyElementDataService {
 
     private final ObjectsSurveyElementDataRepository repository;
-    private final ObjectsSurveyElementDataMapper mapper;
+    private final SurveyObjectElementDataMapper mapper;
     private final RepositoryRequestService requestService;
 
     @Override
-    public List<SurveyObjectElementDataDto> save(Long surveyObjectId, List<NewObjectsSurveyElementDataDto> elementsDataDto) {
+    public List<SurveyObjectElementDataDto> save(Long surveyObjectId, List<NewSurveyObjectElementDataDto> elementsDataDto) {
         ObjectsSurveyElementData data = getDataForObjectsSurveyElement(surveyObjectId
                                                                      , elementsDataDto
                                                                           .stream()
-                                                                          .map(NewObjectsSurveyElementDataDto::getElementId)
+                                                                          .map(NewSurveyObjectElementDataDto::getElementId)
                                                                           .toList());
         return getListDto(repository.saveAll(elementsDataDto.stream().map(e -> {
             SurveyObjectElementData elementData = mapper.mapFromNewObjectsSurveyElement(e);
@@ -45,12 +42,12 @@ public class ObjectsSurveyElementDataServiceImpl implements ObjectsSurveyElement
     }
 
     @Override
-    public List<SurveyObjectElementDataDto> update(Long surveyObjectId, List<UpdateObjectsSurveyElementDataDto> elementsDataDto) {
-        validateIds(elementsDataDto.stream().map(UpdateObjectsSurveyElementDataDto::getId).toList());
+    public List<SurveyObjectElementDataDto> update(Long surveyObjectId, List<UpdateSurveyObjectElementDataDto> elementsDataDto) {
+        validateIds(elementsDataDto.stream().map(UpdateSurveyObjectElementDataDto::getId).toList());
         ObjectsSurveyElementData data = getDataForObjectsSurveyElement(surveyObjectId
                                                                , elementsDataDto
                                                                        .stream()
-                                                                       .map(UpdateObjectsSurveyElementDataDto::getElementId)
+                                                                       .map(UpdateSurveyObjectElementDataDto::getElementId)
                                                                        .toList());
         return getListDto(repository.saveAll(elementsDataDto.stream().map(e -> {
             SurveyObjectElementData elementData = mapper.mapFromUpdateObjectsSurveyElement(e);
@@ -68,6 +65,13 @@ public class ObjectsSurveyElementDataServiceImpl implements ObjectsSurveyElement
             return;
         }
         throw new NotFoundException(String.format("ObjectsSurvey elements with ids= %s not found for delete", id));
+    }
+
+    @Override
+    public void addElementRejectionParameters(Long elementId, ElementRejectionParameters rejectionParameters) {
+        SurveyObjectElementData surveyObjectElementData = repository.findByElementId(elementId);
+        surveyObjectElementData.setRejectionParameters(rejectionParameters);
+        repository.save(surveyObjectElementData);
     }
 
     private ObjectsSurveyElementData getDataForObjectsSurveyElement(Long surveyObjectId, List<Long> elementIds) {

@@ -1,20 +1,22 @@
-package ru.nabokovsg.data.dto.objectsSurveyElementData;
+package ru.nabokovsg.data.dto.rejection.surveyObjectElement;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Setter
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor
-@Schema(description = "Новые данные элементов объекта обследования")
-public class NewObjectsSurveyElementDataDto {
+@Schema(description = "Данные для изменения информации об элементе объекта обследования")
+public class UpdateSurveyObjectElementDataDto {
 
+    @Schema(description = "Индентификатор")
+    @NotNull(message = "id must not be null")
+    @Positive(message = "id must be negative")
+    private Long id;
     @Schema(description = "Индентификатор элемента объекта обследования")
     @NotNull(message = "element id must not be null")
     @Positive(message = "element id must be negative")

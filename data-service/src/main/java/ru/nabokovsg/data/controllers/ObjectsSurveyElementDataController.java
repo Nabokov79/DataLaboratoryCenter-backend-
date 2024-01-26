@@ -11,9 +11,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.nabokovsg.data.dto.objectsSurveyElementData.NewObjectsSurveyElementDataDto;
-import ru.nabokovsg.data.dto.objectsSurveyElementData.SurveyObjectElementDataDto;
-import ru.nabokovsg.data.dto.objectsSurveyElementData.UpdateObjectsSurveyElementDataDto;
+import ru.nabokovsg.data.dto.rejection.surveyObjectElement.NewSurveyObjectElementDataDto;
+import ru.nabokovsg.data.dto.rejection.surveyObjectElement.SurveyObjectElementDataDto;
+import ru.nabokovsg.data.dto.rejection.surveyObjectElement.UpdateSurveyObjectElementDataDto;
 import ru.nabokovsg.data.services.ObjectsSurveyElementDataService;
 
 import java.util.List;
@@ -37,7 +37,7 @@ public class ObjectsSurveyElementDataController {
             @RequestParam @Parameter(description = "Индентификатор объекта обследования")
             @NotNull @Positive Long surveyObjectId,
             @RequestBody @Valid
-            @Parameter(description = "Объект обследования") List<NewObjectsSurveyElementDataDto> elementsDataDto) {
+            @Parameter(description = "Объект обследования") List<NewSurveyObjectElementDataDto> elementsDataDto) {
         return ResponseEntity.ok().body(service.save(surveyObjectId, elementsDataDto));
     }
 
@@ -47,7 +47,7 @@ public class ObjectsSurveyElementDataController {
             @RequestParam @Parameter(description = "Индентификатор объекта обследования")
             @NotNull @Positive Long surveyObjectId,
             @RequestBody @Valid
-            @Parameter(description = "Объект обследования") List<UpdateObjectsSurveyElementDataDto> elementsDataDto) {
+            @Parameter(description = "Объект обследования") List<UpdateSurveyObjectElementDataDto> elementsDataDto) {
         return ResponseEntity.ok().body(service.update(surveyObjectId, elementsDataDto));
     }
 

@@ -33,12 +33,9 @@ public class SurveyObjectElementData {
     private Integer pipeDiameterMax;
     @Column(name = "pipe_wall_thickness_max")
     private Float pipeWallThicknessMax;
-    @Column(name = "min_in_percent")
-    private Float minInPercent;
-    @Column(name = "min")
-    private Float min;
-    @Column(name = "measurement_error")
-    private Float measurementError;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rejection_parameter_id", referencedColumnName = "id")
+    private ElementRejectionParameters rejectionParameters;
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "survey_object_id",  nullable = false)
     private SurveyObject objectSurvey;

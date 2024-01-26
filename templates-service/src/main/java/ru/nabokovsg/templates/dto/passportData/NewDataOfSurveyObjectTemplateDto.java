@@ -22,13 +22,13 @@ public class NewDataOfSurveyObjectTemplateDto {
     @NotNull(message = "object type id should not be null")
     @Positive(message = "object type id must be positive")
     private Long objectTypeId;
-    @Schema(description = "Указать порядковый номер в документе")
+    @Schema(description = "Применить в отчете")
     @NotNull(message = "useInReport should not be null")
     private boolean useInReport;
-    @Schema(description = "Указать порядковый номер в документе")
+    @Schema(description = "Применить в протоколе обследования")
     @NotNull(message = "useInProtocolSurvey should not be null")
     private boolean useInProtocolSurvey;
-    @Schema(description = "Указать порядковый номер в документе")
+    @Schema(description = "Применить в протоколе контроля качества")
     @NotNull(message = "useInProtocolQuality should not be null")
     private boolean useInProtocolQuality;
     @Schema(description = "Новый шаблон данных паспорта объекта")
